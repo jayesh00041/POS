@@ -1,0 +1,15 @@
+# Node dependencies
+node_modules/
+
+# Environment files
+.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Database & Uploads (if applicable)
+database.sqlite
+uploads/
