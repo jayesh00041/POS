@@ -34,7 +34,7 @@ export default function WeeklyRevenue(props: { [x: string]: any }) {
 					lineHeight='100%'
 					borderRadius='10px'
 					{...rest}>
-					<Icon as={MdBarChart} color={iconColor} w='24px' h='24px' />
+					<Icon as={MdBarChart as React.ElementType} color={iconColor} w='24px' h='24px' />
 				</Button>
 			</Flex>
 

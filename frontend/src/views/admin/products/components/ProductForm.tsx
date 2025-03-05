@@ -20,46 +20,55 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import { MdDelete } from "react-icons/md";
+import { addOrUpdateProduct } from "http-routes";
+import { useMutation } from "@tanstack/react-query";
+import { enqueueSnackbar } from "notistack";
+import { getCategories } from "http-routes";
 
-const API_URL = process.env.REACT_APP_CATEGORY_API || "https://mocki.io/v1/17e723f5-948e-4b7b-b006-cca3459c3af5";
-
-const ProductForm = ({ isOpen, onClose, product, setCategory, setProducts }) => {
+const ProductForm = ({ isOpen, onClose, product, setProducts }) => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [counterNo, setCounterNo] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [variations, setVariations] = useState([]);
+  const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
-    fetch(API_URL)
-      .then((response) => response.json())
-      .then((data) => setCategories(data))
-      .catch((error) => console.error("Error fetching categories:", error));
-  }, []);
+      getCategoriesMutation.mutate();
+    }, []);
+  
+    const getCategoriesMutation = useMutation({
+      mutationFn: () => getCategories(),
+      onSuccess: (data: any) => {
+        const resCategories = data.data.data
+        setCategories(resCategories);
+        setSelectedCategory(product ? resCategories.find((cat) => cat._id === product.categoryId) : null);
+        if(!product){
+          setCounterNo(selectedCategory?.counterNo || "");
+        }
+      },
+      onError(error) {
+        enqueueSnackbar('Error fetching categories:', { variant: 'error' });
+      },
+    });
 
   useEffect(() => {
     setName(product?.name || "");
     setPrice(product?.price || "");
     setCounterNo(product?.counterNo || "");
     setImageUrl(product?.imageUrl || "");
-    setSelectedCategory(product?.category || "");
+    setSelectedCategory(product?.categoryId || "");
     setVariations(product?.variations || []);
   }, [product]);
 
   const handleCategoryChange = (event) => {
-    const selected = event.target.value;
-    setSelectedCategory(selected);
-    setCategory(selected);
-    const associatedCounter = categories.find((cat) => cat.name === selected)?.counterNo || "";
+    const selectedCategryId = event.target.value;
+    const category = categories.find((cat) => cat._id === selectedCategryId);
+    setSelectedCategory(category);
+    const associatedCounter = category.counterNo || "";
     setCounterNo(associatedCounter);
-  };
-
-  const handleImageChange = (e) => {
-    if (e.target.files.length > 0) {
-      setImageUrl(URL.createObjectURL(e.target.files[0]));
-    }
   };
 
   const handleVariationChange = (index, field, value) => {
@@ -77,20 +86,48 @@ const ProductForm = ({ isOpen, onClose, product, setCategory, setProducts }) => 
     setVariations(variations.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = () => {
-    const newProduct = {
-      id: product ? product.id : Date.now(),
-      name,
-      price,
-      counterNo,
-      imageUrl,
-      category: selectedCategory,
-      variations,
-    };
+  const handleImageChange = (e) => {
+    if (e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setImageFile(file); // Store the file for submission
+      setImageUrl(URL.createObjectURL(file)); // Show preview
+    }
+  };
 
-    setProducts((prev) => (product ? prev.map((p) => (p.id === product.id ? newProduct : p)) : [...prev, newProduct]));
+  const handleSubmit = () => {
+    const formData = new FormData();
+    if (product?._id) formData.append("id", product._id);
+    formData.append("name", name);
+    formData.append("price", price);
+    formData.append("counterNo", counterNo);
+    formData.append("categoryId", selectedCategory._id);
+    formData.append("variations", JSON.stringify(variations));
+
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
+
+    addOrUpdateProductMutation.mutate(formData);
     onClose();
   };
+
+  const addOrUpdateProductMutation = useMutation({
+    mutationFn: (reqData: any) => addOrUpdateProduct(reqData),
+    onSuccess: (response: any) => {
+      setProducts((prev) => {
+        if (product?._id) {
+          return prev.map((p) => (p._id === product._id ? response.data.data : p));
+        } else {
+          return [...prev, response.data.data];
+        }
+      });
+      enqueueSnackbar(response.data.message, { variant: "success" });
+    },
+    onError: () => {
+      enqueueSnackbar("Error adding/updating product", { variant: "error" });
+    },
+  });
+
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -114,9 +151,9 @@ const ProductForm = ({ isOpen, onClose, product, setCategory, setProducts }) => 
             </FormControl>
             <FormControl isRequired>
               <FormLabel>Category</FormLabel>
-              <Select value={selectedCategory} onChange={handleCategoryChange}>
+              <Select value={selectedCategory?._id} onChange={handleCategoryChange}>
                 {categories.map((cat) => (
-                  <option key={cat.id} value={cat.name}>
+                  <option key={cat._id} value={cat._id}>
                     {cat.name}
                   </option>
                 ))}
@@ -143,7 +180,7 @@ const ProductForm = ({ isOpen, onClose, product, setCategory, setProducts }) => 
                     value={variation.price}
                     onChange={(e) => handleVariationChange(index, "price", e.target.value)}
                   />
-                  <Icon as={MdDelete} colorScheme="red" size="sm" onClick={() => removeVariation(index)} />
+                  <Icon as={MdDelete as React.ElementType} colorScheme="red" size="sm" onClick={() => removeVariation(index)} />
                 </Box>
               ))}
               <Button mt={2} colorScheme="green" leftIcon={<AddIcon />} onClick={addVariation}>

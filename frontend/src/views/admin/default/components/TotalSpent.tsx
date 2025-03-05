@@ -25,7 +25,7 @@ export default function TotalSpent(props: { [x: string]: any }) {
 		<Card justifyContent='center' alignItems='center' flexDirection='column' w='100%' mb='0px' {...rest}>
 			<Flex align='center' justify='space-between' w='100%' pe='20px' pt='5px'>
 				<Button bg={boxBg} fontSize='sm' fontWeight='500' color={textColorSecondary} borderRadius='7px'>
-					<Icon as={MdOutlineCalendarToday} color={textColorSecondary} me='4px' />
+					<Icon as={MdOutlineCalendarToday as React.ElementType} color={textColorSecondary} me='4px' />
 					This month
 				</Button>
 				<Button
@@ -41,7 +41,7 @@ export default function TotalSpent(props: { [x: string]: any }) {
 					lineHeight='100%'
 					borderRadius='10px'
 					{...rest}>
-					<Icon as={MdBarChart} color={iconColor} w='24px' h='24px' />
+					<Icon as={MdBarChart as React.ElementType} color={iconColor} w='24px' h='24px' />
 				</Button>
 			</Flex>
 			<Flex w='100%' flexDirection={{ base: 'column', lg: 'row' }}>
@@ -54,7 +54,7 @@ export default function TotalSpent(props: { [x: string]: any }) {
 							Total Spent
 						</Text>
 						<Flex align='center'>
-							<Icon as={RiArrowUpSFill} color='green.500' me='2px' mt='2px' />
+							<Icon as={RiArrowUpSFill as React.ElementType} color='green.500' me='2px' mt='2px' />
 							<Text color='green.500' fontSize='sm' fontWeight='700'>
 								+2.45%
 							</Text>
@@ -62,7 +62,7 @@ export default function TotalSpent(props: { [x: string]: any }) {
 					</Flex>
 
 					<Flex align='center'>
-						<Icon as={IoCheckmarkCircle} color='green.500' me='4px' />
+						<Icon as={IoCheckmarkCircle as React.ElementType} color='green.500' me='4px' />
 						<Text color='green.500' fontSize='md' fontWeight='700'>
 							On track
 						</Text>

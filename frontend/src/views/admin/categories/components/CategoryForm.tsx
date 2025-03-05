@@ -15,11 +15,15 @@ import {
   Avatar,
   Box,
 } from "@chakra-ui/react";
+import { useMutation } from "@tanstack/react-query";
+import { addOrUpdateCategory } from "http-routes";
+import { enqueueSnackbar } from "notistack";
 
 const CategoryForm = ({ isOpen, onClose, category, setCategories }) => {
   const [name, setName] = useState("");
   const [counterNo, setCounterNo] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
     setName(category?.name || "");
@@ -29,23 +33,44 @@ const CategoryForm = ({ isOpen, onClose, category, setCategories }) => {
 
   const handleImageChange = (e) => {
     if (e.target.files.length > 0) {
-      setImageUrl(URL.createObjectURL(e.target.files[0]));
+      const file = e.target.files[0];
+      setImageFile(file); // Store the file for submission
+      setImageUrl(URL.createObjectURL(file)); // Show preview
     }
   };
 
   const handleSubmit = () => {
-    const newCategory = {
-      id: category ? category.id : Date.now(),
-      name,
-      counterNo,
-      imageUrl,
-    };
+    const formData = new FormData();
+    if (category?._id) formData.append("id", category._id);
+    formData.append("name", name);
+    formData.append("counterNo", counterNo);
     
-    setCategories((prev) =>
-      category ? prev.map((c) => (c.id === category.id ? newCategory : c)) : [...prev, newCategory]
-    );
+    if (imageFile) {
+        formData.append("image", imageFile); // Ensure key name matches backend
+    }
+    addOrUpdateCategoryMutation.mutate(formData);
     onClose();
-  };
+};
+
+  const addOrUpdateCategoryMutation = useMutation({
+    mutationFn: (reqData: any) => addOrUpdateCategory(reqData), 
+    onSuccess: (response: any) => {
+      console.log(response);
+      setCategories((prevCategories) => {
+        if (category?._id) {
+          return prevCategories.map((c) =>
+            c._id === category._id ? response.data.data : c
+          );
+        } else {
+          return [...prevCategories, response.data.data];
+        }
+      });
+      enqueueSnackbar(response.data.message, { variant: "success" });
+    },
+    onError: (error) => {
+      enqueueSnackbar("Error adding/updating category:", { variant: "error" });
+    },
+  });
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -77,5 +102,4 @@ const CategoryForm = ({ isOpen, onClose, category, setCategories }) => {
     </Modal>
   );
 };
-
 export default CategoryForm;

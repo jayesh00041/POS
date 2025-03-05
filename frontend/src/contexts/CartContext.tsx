@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 
 type Variation = {
+  _id?: string;
   name: string;
   price: number;
 };
@@ -9,44 +10,45 @@ type Product = {
   id: number;
   name: string;
   category: string;
-  price: string;
+  price: number;
   counterNo: number;
-  variations: Variation[];
+  variations?: Variation[];
 };
 
 type CartItem = {
   product: Product;
-  selectedVariation: Variation;
+  selectedVariation?: Variation;
   quantity: number;
+  price?: number;
 };
 
 type CartContextType = {
-  cart: { [key: number]: CartItem };
-  addToCart: (product: Product, variation: Variation) => void;
-  removeFromCart: (productId: number, variationName: string) => void;
+  cart: { [key: string]: CartItem };
+  addToCart: (product: Product, variation?: Variation) => void;
+  removeFromCart: (productId: number, variationId?: string) => void;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [cart, setCart] = useState<{ [key: number]: CartItem }>({});
+  const [cart, setCart] = useState<{ [key: string]: CartItem }>({});
 
-  const addToCart = (product: Product, variation: Variation) => {
+  const addToCart = (product: Product, variation?: Variation) => {
     setCart((prev) => {
-      const key = `${product.id}-${variation.name}`;
+      const key = variation?._id ? `${product.id}-${variation._id}` : `${product.id}`;
       const existing = prev[key];
       return {
         ...prev,
         [key]: existing
           ? { ...existing, quantity: existing.quantity + 1 }
-          : { product, selectedVariation: variation, quantity: 1 },
+          : { product, selectedVariation: variation, quantity: 1, price: product.price },
       };
     });
   };
 
-  const removeFromCart = (productId: number, variationName: string) => {
+  const removeFromCart = (productId: number, variationId?: string) => {
     setCart((prev) => {
-      const key = `${productId}-${variationName}`;
+      const key = variationId ? `${productId}-${variationId}` : `${productId}`;
       if (!prev[key]) return prev;
 
       const updatedQuantity = prev[key].quantity - 1;

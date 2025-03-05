@@ -80,8 +80,20 @@ const getUserData = async (req, res, next) => {
     }
 }
 
+const logoutUser = async (req, res, next) => {
+    try {
+        res.clearCookie("accessToken");
+        res.status(200).json({
+            status: "User logged out successfully"
+        })
+    } catch (err) {
+        return next(createHttpError(400, "Something went wrong"));
+    }
+}
+
 module.exports = {
     registerUser,
     loginUser,
-    getUserData
+    getUserData,
+    logoutUser
 }

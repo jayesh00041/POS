@@ -59,7 +59,7 @@ export default function Banner(props: { icon: JSX.Element | string; [x: string]:
 					}}
 					mb='10px'>
 					<Flex align='center'>
-						<Icon as={MdOutlinePerson} h='16px' w='16px' me='8px' />
+						<Icon as={MdOutlinePerson as React.ElementType} h='16px' w='16px' me='8px' />
 						<Text fontSize='sm' fontWeight='400'>
 							Panel 1
 						</Text>
@@ -79,7 +79,7 @@ export default function Banner(props: { icon: JSX.Element | string; [x: string]:
 					}}
 					mb='10px'>
 					<Flex align='center'>
-						<Icon as={MdOutlineCardTravel} h='16px' w='16px' me='8px' />
+						<Icon as={MdOutlineCardTravel as React.ElementType} h='16px' w='16px' me='8px' />
 						<Text fontSize='sm' fontWeight='400'>
 							Panel 2
 						</Text>
@@ -99,7 +99,7 @@ export default function Banner(props: { icon: JSX.Element | string; [x: string]:
 					}}
 					mb='10px'>
 					<Flex align='center'>
-						<Icon as={MdOutlineLightbulb} h='16px' w='16px' me='8px' />
+						<Icon as={MdOutlineLightbulb as React.ElementType} h='16px' w='16px' me='8px' />
 						<Text fontSize='sm' fontWeight='400'>
 							Panel 3
 						</Text>
@@ -118,7 +118,7 @@ export default function Banner(props: { icon: JSX.Element | string; [x: string]:
 						bg: 'transparent'
 					}}>
 					<Flex align='center'>
-						<Icon as={MdOutlineSettings} h='16px' w='16px' me='8px' />
+						<Icon as={MdOutlineSettings as React.ElementType} h='16px' w='16px' me='8px' />
 						<Text fontSize='sm' fontWeight='400'>
 							Panel 4
 						</Text>

@@ -11,6 +11,9 @@ import {
 } from "@chakra-ui/react";
 import ItemComponent from "./ItemComponent";
 import CartComponent from "./CartComponent";
+import { useMutation } from "@tanstack/react-query";
+import { categoryWiseProducts } from "../../../../http-routes/index";
+import { enqueueSnackbar } from "notistack";
 
 export default function NewInvoiceComponent() {
   const [categories, setCategories] = useState([]);
@@ -19,10 +22,14 @@ export default function NewInvoiceComponent() {
   const borderColor = useColorModeValue("gray.200", "gray.600");
 
   useEffect(() => {
-    fetch("https://mocki.io/v1/531e17ca-c463-402e-9fc4-7f102aad1a1c") // Replace with actual API
-      .then((res) => res.json())
-      .then((data) => setCategories(data.categories));
+    getCategoryWiseProductsMutation.mutate();
   }, []);
+
+  const getCategoryWiseProductsMutation = useMutation({
+    mutationFn: () => categoryWiseProducts(),
+    onSuccess: (data) => setCategories(data.data.categories),
+    onError: (error: any) => enqueueSnackbar(error.data.message, { variant: "error" }),
+  })
 
   return (
     <Box

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Table,
   Thead,
@@ -22,37 +22,53 @@ import {
   Tooltip,
   Icon,
   Box,
-} from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
-import { MdDelete, MdEdit } from "react-icons/md";
-import { FaPlus } from "react-icons/fa";
-import CategoryForm from "./CategoryForm";
-import { SearchBar } from "components/navbar/searchBar/SearchBar";
+  Spinner,
+  Text,
+} from '@chakra-ui/react';
+import { SearchIcon } from '@chakra-ui/icons';
+import { MdDelete, MdEdit } from 'react-icons/md';
+import { FaPlus } from 'react-icons/fa';
+import CategoryForm from './CategoryForm';
+import { SearchBar } from 'components/navbar/searchBar/SearchBar';
+import { useMutation } from '@tanstack/react-query';
+import { getCategories, deleteCategory } from 'http-routes';
+import { enqueueSnackbar } from 'notistack';
 
 const CategoriesTable = () => {
   const [categories, setCategories] = useState([]);
   const [filteredCategories, setFilteredCategories] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure();
   const toast = useToast();
 
   useEffect(() => {
-    fetch(process.env.REACT_APP_CATEGORY_API)
-      .then((response) => response.json())
-      .then((data) => {
-        setCategories(data);
-        setFilteredCategories(data);
-      })
-      .catch((error) => console.error("Error fetching categories:", error));
+    getCategoriesMutation.mutate();
   }, []);
+
+  const getCategoriesMutation = useMutation({
+    mutationFn: () => getCategories(),
+    onSuccess: (data: any) => {
+      setCategories(data.data.data);
+      setIsLoading(false);
+    },
+    onError(error) {
+      enqueueSnackbar('Error fetching categories:', { variant: 'error' });
+      setIsLoading(false);
+    },
+  });
 
   useEffect(() => {
     setFilteredCategories(
       categories.filter((category) =>
-        category.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+        category.name.toLowerCase().includes(searchTerm.toLowerCase()),
+      ),
     );
   }, [searchTerm, categories]);
 
@@ -62,79 +78,115 @@ const CategoriesTable = () => {
   };
 
   const handleDelete = (id) => {
-    setSelectedCategory(categories.find((c) => c.id === id));
+    setSelectedCategory(categories.find((c) => c._id === id));
     onDeleteOpen();
   };
 
   const confirmDelete = () => {
-    fetch(`http://localhost:8000/api/categories/${selectedCategory.id}`, {
-      method: "DELETE",
-    })
-      .then(() => {
-        setCategories(categories.filter((c) => c.id !== selectedCategory.id));
-        toast({
-          title: "Category deleted.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((error) => console.error("Error deleting category:", error));
+    deleteCategoryMutation.mutate(selectedCategory._id);
     onDeleteClose();
   };
 
+  const deleteCategoryMutation = useMutation({
+    mutationFn: (id) => deleteCategory(id),
+    onSuccess: () => {
+      setCategories((prevCategories) =>
+        prevCategories.filter((c) => c._id !== selectedCategory._id),
+      );
+      enqueueSnackbar('Category deleted successfully', { variant: 'success' });
+    },
+    onError: () => {
+      enqueueSnackbar('Error deleting category', { variant: 'error' });
+    },
+  });
+
   return (
     <Box>
-      <Flex alignItems='center' justify='space-between' gap='10px'>
-        <SearchBar placeholder="Search Category" onChange={(e) => setSearchTerm(e.target.value)} />
-        <Tooltip label='Add Category'>
-          <Button colorScheme='brand' height="50px" width="50px" borderRadius='50%' onClick={() => {
-            setSelectedCategory(null);
-            onOpen();
-          }}>
-            <Icon as={FaPlus} />
+      <Flex alignItems="center" justify="space-between" gap="10px">
+        <SearchBar
+          placeholder="Search Category"
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <Tooltip label="Add Category">
+          <Button
+            colorScheme="brand"
+            height="50px"
+            width="50px"
+            borderRadius="50%"
+            onClick={() => {
+              setSelectedCategory(null);
+              onOpen();
+            }}
+          >
+            <Icon as={FaPlus as React.ElementType} />
           </Button>
         </Tooltip>
       </Flex>
 
       <TableContainer overflowY="auto" maxH="calc(100vh - 196px)">
-        <Table variant="striped">
-          <Thead position="sticky" top={0} bg="white" zIndex={1}>
-            <Tr>
-              <Th>Avatar</Th>
-              <Th>Category ID</Th>
-              <Th>Name</Th>
-              <Th>Counter No.</Th>
-              <Th>Total Products</Th>
-              <Th>Actions</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {filteredCategories.map((category) => (
-              <Tr key={category.id}>
-                <Td>
-                  <Avatar size="sm" name={category.name} src={category.imageUrl || ""} />
-                </Td>
-                <Td>{category.id}</Td>
-                <Td>{category.name}</Td>
-                <Td>{category.counterNo}</Td>
-                <Td>{category.totalProducts}</Td>
-                <Td>
-                  <Button colorScheme="blue" size="sm" onClick={() => handleEdit(category)}>
-                    <Icon as={MdEdit} width="15px" height="15px" />
-                  </Button>
-                  <Button colorScheme="red" size="sm" ml={2} onClick={() => handleDelete(category.id)}>
-                    <Icon as={MdDelete} width="15px" height="15px" />
-                  </Button>
-                </Td>
+        {isLoading ? (
+          <Flex justify="center" align="center" height="200px">
+            <Spinner size="xl" />
+          </Flex>
+        ) : filteredCategories.length === 0 ? (
+          <Flex justify="center" align="center" height="200px">
+            <Text fontSize="lg" color="gray.500">No categories found.</Text>
+          </Flex>
+        ) : (
+          <Table variant="striped">
+            <Thead position="sticky" top={0} bg="white" zIndex={1}>
+              <Tr>
+                <Th>Avatar</Th>
+                <Th>Name</Th>
+                <Th>Counter No.</Th>
+                <Th>Total Products</Th>
+                <Th>Actions</Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
+            </Thead>
+            <Tbody>
+              {filteredCategories.map((category) => (
+                <Tr key={category._id}>
+                  <Td>
+                    <Avatar
+                      size="sm"
+                      name={category.name}
+                      src={category.imageUrl || ''}
+                    />
+                  </Td>
+                  <Td>{category.name}</Td>
+                  <Td>{category.counterNo}</Td>
+                  <Td>{category.totalProducts}</Td>
+                  <Td>
+                    <Button
+                      colorScheme="blue"
+                      size="sm"
+                      onClick={() => handleEdit(category)}
+                    >
+                      <Icon as={MdEdit as React.ElementType} width="15px" height="15px" />
+                    </Button>
+                    <Button
+                      colorScheme="red"
+                      size="sm"
+                      ml={2}
+                      onClick={() => handleDelete(category._id)}
+                    >
+                      <Icon as={MdDelete as React.ElementType} width="15px" height="15px" />
+                    </Button>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        )}
       </TableContainer>
 
       {/* Edit/Add Category Modal */}
-      <CategoryForm isOpen={isOpen} onClose={onClose} category={selectedCategory} />
+      <CategoryForm
+        isOpen={isOpen}
+        onClose={onClose}
+        category={selectedCategory}
+        setCategories={setCategories}
+      />
 
       {/* Delete Confirmation Modal */}
       <Modal isOpen={isDeleteOpen} onClose={onDeleteClose}>
@@ -146,8 +198,12 @@ const CategoriesTable = () => {
             Are you sure you want to delete {selectedCategory?.name}?
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="red" onClick={confirmDelete}>Yes, Delete</Button>
-            <Button ml={3} onClick={onDeleteClose}>Cancel</Button>
+            <Button colorScheme="red" onClick={confirmDelete}>
+              Yes, Delete
+            </Button>
+            <Button ml={3} onClick={onDeleteClose}>
+              Cancel
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

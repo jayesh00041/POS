@@ -79,13 +79,13 @@ export default function ComplexTable(props: { tableData: any }) {
 						) : null
 					}
 					as={
-						info.getValue() === 'Approved' ? (
+						(info.getValue() === 'Approved' ? (
 							MdCheckCircle
 						) : info.getValue() === 'Disable' ? (
 							MdCancel
 						) : info.getValue() === 'Error' ? (
 							MdOutlineError
-						) : null
+						) : null) as React.ElementType
 					}
 				/>
 				<Text color={textColor} fontSize='sm' fontWeight='700'>

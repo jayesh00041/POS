@@ -3,6 +3,7 @@ const express = require("express");
 const path = require("path"); // Core Node.js module for handling file paths
 const cookieParser = require("cookie-parser");
 const createHttpError = require("http-errors");
+const cors = require("cors");
 
 // Import configurations and utilities
 const connectDb = require("./config/database");
@@ -13,7 +14,7 @@ const globalErrorHanddler = require("./middlewares/globalErrorHanddler");
 const app = express();
 
 // Load environment variables
-const PORT = config?.PORT || 3000;
+const PORT = config?.PORT || 8000;
 
 // Connect to database
 connectDb();
@@ -23,6 +24,11 @@ app.use(express.json());
 
 // Middleware to parse cookies
 app.use(cookieParser());
+
+app.use(cors({
+    credentials: true,
+    origin: ["http://localhost:3000"]
+}))
 
 // Serve static files (uploaded images, etc.)
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));

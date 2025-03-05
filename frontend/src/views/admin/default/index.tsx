@@ -29,7 +29,6 @@ import MiniCalendar from 'components/calendar/MiniCalendar';
 import MiniStatistics from 'components/card/MiniStatistics';
 import IconBox from 'components/icons/IconBox';
 import { MdAddTask, MdAttachMoney, MdBarChart, MdFileCopy } from 'react-icons/md';
-import CheckTable from 'views/admin/rtl/components/CheckTable';
 import ComplexTable from 'views/admin/default/components/ComplexTable';
 import DailyTraffic from 'views/admin/default/components/DailyTraffic';
 import PieCard from 'views/admin/default/components/PieCard';
@@ -52,7 +51,7 @@ export default function UserReports() {
 							w='56px'
 							h='56px'
 							bg={boxBg}
-							icon={<Icon w='32px' h='32px' as={MdBarChart} color={brandColor} />}
+							icon={<Icon w='32px' h='32px' as={MdBarChart as React.ElementType} color={brandColor} />}
 						/>
 					}
 					name='Earnings'
@@ -64,7 +63,7 @@ export default function UserReports() {
 							w='56px'
 							h='56px'
 							bg={boxBg}
-							icon={<Icon w='32px' h='32px' as={MdAttachMoney} color={brandColor} />}
+							icon={<Icon w='32px' h='32px' as={MdAttachMoney as React.ElementType} color={brandColor} />}
 						/>
 					}
 					name='Spend this month'
@@ -93,7 +92,7 @@ export default function UserReports() {
 							w='56px'
 							h='56px'
 							bg='linear-gradient(90deg, #4481EB 0%, #04BEFE 100%)'
-							icon={<Icon w='28px' h='28px' as={MdAddTask} color='white' />}
+							icon={<Icon w='28px' h='28px' as={MdAddTask as React.ElementType} color='white' />}
 						/>
 					}
 					name='New Tasks'
@@ -105,7 +104,7 @@ export default function UserReports() {
 							w='56px'
 							h='56px'
 							bg={boxBg}
-							icon={<Icon w='32px' h='32px' as={MdFileCopy} color={brandColor} />}
+							icon={<Icon w='32px' h='32px' as={MdFileCopy as React.ElementType} color={brandColor} />}
 						/>
 					}
 					name='Total Projects'
@@ -118,7 +117,6 @@ export default function UserReports() {
 				<WeeklyRevenue />
 			</SimpleGrid>
 			<SimpleGrid columns={{ base: 1, md: 1, xl: 2 }} gap='20px' mb='20px'>
-				<CheckTable tableData={tableDataCheck} />
 				<SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap='20px'>
 					<DailyTraffic />
 					<PieCard />

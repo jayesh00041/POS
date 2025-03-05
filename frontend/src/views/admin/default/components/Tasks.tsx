@@ -23,7 +23,7 @@ export default function Conversion(props: { [x: string]: any }) {
 					w='38px'
 					h='38px'
 					bg={boxBg}
-					icon={<Icon as={MdCheckBox} color={brandColor} w='24px' h='24px' />}
+					icon={<Icon as={MdCheckBox as React.ElementType} color={brandColor} w='24px' h='24px' />}
 				/>
 
 				<Text color={textColor} fontSize='lg' fontWeight='700'>
@@ -37,35 +37,35 @@ export default function Conversion(props: { [x: string]: any }) {
 					<Text fontWeight='bold' color={textColor} fontSize='md' textAlign='start'>
 						Landing Page Design
 					</Text>
-					<Icon ms='auto' as={MdDragIndicator} color='secondaryGray.600' w='24px' h='24px' />
+					<Icon ms='auto' as={MdDragIndicator as React.ElementType} color='secondaryGray.600' w='24px' h='24px' />
 				</Flex>
 				<Flex w='100%' justify='space-between' mb='20px'>
 					<Checkbox me='16px' defaultChecked colorScheme='brandScheme' />
 					<Text fontWeight='bold' color={textColor} fontSize='md' textAlign='start'>
 						Dashboard Builder
 					</Text>
-					<Icon ms='auto' as={MdDragIndicator} color='secondaryGray.600' w='24px' h='24px' />
+					<Icon ms='auto' as={MdDragIndicator as React.ElementType} color='secondaryGray.600' w='24px' h='24px' />
 				</Flex>
 				<Flex w='100%' justify='space-between' mb='20px'>
 					<Checkbox defaultChecked me='16px' colorScheme='brandScheme' />
 					<Text fontWeight='bold' color={textColor} fontSize='md' textAlign='start'>
 						Mobile App Design
 					</Text>
-					<Icon ms='auto' as={MdDragIndicator} color='secondaryGray.600' w='24px' h='24px' />
+					<Icon ms='auto' as={MdDragIndicator as React.ElementType} color='secondaryGray.600' w='24px' h='24px' />
 				</Flex>
 				<Flex w='100%' justify='space-between' mb='20px'>
 					<Checkbox me='16px' colorScheme='brandScheme' />
 					<Text fontWeight='bold' color={textColor} fontSize='md' textAlign='start'>
 						Illustrations
 					</Text>
-					<Icon ms='auto' as={MdDragIndicator} color='secondaryGray.600' w='24px' h='24px' />
+					<Icon ms='auto' as={MdDragIndicator as React.ElementType} color='secondaryGray.600' w='24px' h='24px' />
 				</Flex>
 				<Flex w='100%' justify='space-between' mb='20px'>
 					<Checkbox defaultChecked me='16px' colorScheme='brandScheme' />
 					<Text fontWeight='bold' color={textColor} fontSize='md' textAlign='start'>
 						Promotional LP
 					</Text>
-					<Icon ms='auto' as={MdDragIndicator} color='secondaryGray.600' w='24px' h='24px' />
+					<Icon ms='auto' as={MdDragIndicator as React.ElementType} color='secondaryGray.600' w='24px' h='24px' />
 				</Flex>
 			</Box>
 		</Card>

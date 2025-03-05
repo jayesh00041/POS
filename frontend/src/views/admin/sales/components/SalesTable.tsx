@@ -116,7 +116,7 @@ const SalesTable = () => {
                     size="sm"
                     onClick={() => handleView(invoice)}
                   >
-                    <Icon as={FaEye} width="15px" height="15px" />
+                    <Icon as={FaEye as React.ElementType} width="15px" height="15px" />
                   </Button>
                 </Td>
               </Tr>

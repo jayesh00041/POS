@@ -14,6 +14,6 @@ router.route("/")
     .get(getProducts);
 
 router.route("/:id").delete(deleteProduct);
-router.route("/categoryWiseList").get(getCategoryWiseItems);
+router.route("/categoryWiseProducts").get(getCategoryWiseItems);
 
 module.exports = router;

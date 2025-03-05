@@ -3,7 +3,6 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import {} from 'react-router-dom';
 import AuthLayout from './layouts/auth';
 import AdminLayout from './layouts/admin';
-import RTLLayout from './layouts/rtl';
 import {
   ChakraProvider,
   // extendTheme
@@ -11,31 +10,52 @@ import {
 import initialTheme from './theme/theme'; //  { themeGreen }
 import { useState } from 'react';
 import { CartProvider } from 'contexts/CartContext';
+import { SnackbarProvider } from 'notistack';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { UserProvider } from 'contexts/UserContext';
+import ProtectedRoute from 'components/protectedRoute/ProtectedRoute';
 // Chakra imports
 
 export default function Main() {
   // eslint-disable-next-line
   const [currentTheme, setCurrentTheme] = useState(initialTheme);
+
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 10000,
+      },
+    },
+  });
   return (
     <ChakraProvider theme={currentTheme}>
-      <CartProvider>
-        <Routes>
-          <Route path="auth/*" element={<AuthLayout />} />
-          <Route
-            path="admin/*"
-            element={
-              <AdminLayout theme={currentTheme} setTheme={setCurrentTheme} />
-            }
-          />
-          <Route
-            path="rtl/*"
-            element={
-              <RTLLayout theme={currentTheme} setTheme={setCurrentTheme} />
-            }
-          />
-          <Route path="/" element={<Navigate to="/admin" replace />} />
-        </Routes>
-      </CartProvider>
+      <UserProvider>
+        <SnackbarProvider autoHideDuration={3000}>
+          <QueryClientProvider client={queryClient}>
+            <CartProvider>
+              <Routes>
+                <Route path="auth/*" element={<AuthLayout />} />
+
+                <Route
+                  path="admin/*"
+                  element={
+                    <ProtectedRoute>
+                      <AdminLayout
+                        theme={currentTheme}
+                        setTheme={setCurrentTheme}
+                      />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/"
+                  element={<Navigate to="/auth/sign-in" replace />}
+                />
+              </Routes>
+            </CartProvider>
+          </QueryClientProvider>
+        </SnackbarProvider>
+      </UserProvider>
     </ChakraProvider>
   );
 }

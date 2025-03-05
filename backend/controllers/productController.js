@@ -8,8 +8,8 @@ const saveOrUpdateProduct = async (req, res, next) => {
         let imageUrl;
 
         if (req.file) {
-            const filePath = `/uploads/product/${req.file.filename}`;
-            imageUrl = `${req.protocol}://${req.get("host")}${filePath}`;
+            // Store only relative path
+            imageUrl = `/uploads/product/${req.file.filename}`;
         }
 
         // Validate category existence
@@ -21,7 +21,7 @@ const saveOrUpdateProduct = async (req, res, next) => {
         let parsedVariations = typeof variations === "string" ? JSON.parse(variations) : variations;
 
         // Calculate price range if variations exist
-        let finalPrice = price; // Default to given price
+        let finalPrice = price; 
         if (parsedVariations && parsedVariations.length > 0) {
             const prices = parsedVariations.map(variation => variation.price);
             const minPrice = Math.min(...prices);
@@ -30,7 +30,6 @@ const saveOrUpdateProduct = async (req, res, next) => {
         }
 
         let product;
-
         if (id) {
             product = await Product.findByIdAndUpdate(
                 id,
@@ -46,41 +45,47 @@ const saveOrUpdateProduct = async (req, res, next) => {
                 counterNo, 
                 variations: parsedVariations 
             });
-            console.log(name, imageUrl, categoryId, finalPrice, counterNo, parsedVariations);
         }
 
         res.status(200).json({
             status: "success",
             message: id ? "Product updated successfully" : "Product created successfully",
-            data: product,
+            data: {
+                ...product.toObject(),
+                imageUrl: product.imageUrl ? `${req.protocol}://${req.get("host")}${product.imageUrl}` : null,
+            },
         });
     } catch (error) {
         next(createHttpError(500, "Error saving/updating product"));
     }
 };
 
-
 // Fetch category-wise products using categoryId
 const getCategoryWiseItems = async (req, res, next) => {
     try {
         const products = await Product.find().populate("categoryId", "name");
         const categories = {};
-        
+
         products.forEach(product => {
-            console.log(product);
             const categoryName = product.categoryId.name;
             if (!categories[categoryName]) {
                 categories[categoryName] = [];
             }
+
+            // Convert stored relative path to absolute path
+            const absoluteImageUrl = product.imageUrl
+                ? `${req.protocol}://${req.get("host")}${product.imageUrl}`
+                : null;
+
             categories[categoryName].push({
                 id: product._id,
                 name: product.name,
-                priceRange: product.price,
+                price: product.price,
                 counterNo: product.counterNo,
-                variations: product.variations
+                variations: product.variations,
+                imageUrl: absoluteImageUrl, // Return absolute path
             });
         });
-
 
         res.status(200).json({ 
             status: "success", 
@@ -94,7 +99,15 @@ const getCategoryWiseItems = async (req, res, next) => {
 const getProducts = async (req, res, next) => {
     try {
         const products = await Product.find().populate("categoryId", "name");
-        res.status(200).json({ status: "success", data: products });
+
+        const updatedProducts = products.map(product => ({
+            ...product._doc, 
+            imageUrl: product.imageUrl
+                ? `${req.protocol}://${req.get("host")}${product.imageUrl}`
+                : null, // Convert to absolute
+        }));
+
+        res.status(200).json({ status: "success", data: updatedProducts });
     } catch (error) {
         next(createHttpError(500, "Error fetching products"));
     }

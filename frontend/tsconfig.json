@@ -1,4 +1,4 @@
-{ 
+{
   "compilerOptions": {
     "typeRoots": ["node_modules/@types", "src/types"],
     "target": "es2016",
@@ -22,10 +22,8 @@
     "downlevelIteration": true,
     "baseUrl": "src",
     "paths": {
-      "@assets/*": ["./src/assetsassets/*"]
-    },
+      "@assets/*": ["./src/assets/*"]
+    }
   },
-  "include": [
-    "./src"
-  ], 
+  "include": ["./src"]
 }
