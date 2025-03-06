@@ -60,7 +60,7 @@ function SignIn() {
         flexDirection="column"
         justifyContent="center"
         margin={4}
-        p={4}
+        p={6}
         boxShadow="lg"
         borderRadius="md"
       >
