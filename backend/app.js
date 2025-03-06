@@ -27,7 +27,7 @@ app.use(cookieParser());
 
 app.use(cors({
     credentials: true,
-    origin: ["http://localhost:3000", "https://jayesh00041.github.io/"]
+    origin: ["http://localhost:3000", "https://jayesh00041.github.io/POS/"]
 }))
 
 // Serve static files (uploaded images, etc.)
