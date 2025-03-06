@@ -1,5 +1,5 @@
 // Chakra imports
-import { Flex, useColorModeValue } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 
 // Custom components
 // import { HorizonLogo } from 'components/icons/Icons';
