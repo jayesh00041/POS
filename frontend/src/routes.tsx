@@ -60,13 +60,13 @@ const routes = [
     icon: <Icon as={MdGridView as React.ElementType} width="20px" height="20px" color="inherit" />,
     component: <Categories />,
   },
-  // {
-  //   name: 'Main Dashboard',
-  //   layout: '/admin',
-  //   path: '/main-dashboard',
-  //   icon: <Icon as={MdHome as React.ElementType} width="20px" height="20px" color="inherit" />,
-  //   component: <MainDashboard />,
-  // },
+  {
+    name: 'Main Dashboard',
+    layout: '/admin',
+    path: '/main-dashboard',
+    icon: <Icon as={MdHome as React.ElementType} width="20px" height="20px" color="inherit" />,
+    component: <MainDashboard />,
+  },
   // {
   //   name: 'NFT Marketplace',
   //   layout: '/admin',

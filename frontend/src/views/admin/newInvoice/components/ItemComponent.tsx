@@ -32,8 +32,8 @@ export default function ItemComponent({ product }) {
   return (
     <Box p={4} borderWidth="1px" borderRadius="lg" bgColor={boxBg} width="100%">
       <Flex align="center" justify="space-between">
-        {product.image ? (
-          <Image src={product.image} boxSize="50px" borderRadius="full" mr={3} />
+        {product.imageUrl ? (
+          <Image src={product.imageUrl} boxSize="50px" borderRadius="full" mr={3} />
         ) : (
           <Avatar name={product.name} size="md" mr={3} />
         )}
