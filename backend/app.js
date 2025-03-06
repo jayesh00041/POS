@@ -27,7 +27,7 @@ app.use(cookieParser());
 
 app.use(cors({
     credentials: true,
-    origin: ["http://localhost:3000", "https://jayesh00041.github.io"]
+    origin: [config.frontendUrl],
 }))
 
 // Serve static files (uploaded images, etc.)
@@ -49,5 +49,5 @@ app.use(globalErrorHanddler);
 
 // Start the server
 app.listen(PORT, () => {
-    console.log(`🚀 Server is running on http://localhost:${PORT}`);
+    console.log(`🚀 Server is running`);
 });

@@ -20,7 +20,7 @@ import { enqueueSnackbar } from 'notistack';
 import { useUser } from 'contexts/UserContext';
 
 function SignIn() {
-  console.log("hi...................");
+  console.log('hi...................');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -52,7 +52,7 @@ function SignIn() {
   });
 
   return (
-    <Box width="100vw" height="100vh" margin="5px" p="10px" boxShadow="lg">
+    <Box width="100vw" height="100vh">
       <Flex
         maxW={{ base: '100%', md: '420px' }}
         w="100%"
@@ -60,6 +60,10 @@ function SignIn() {
         minH="100vh"
         flexDirection="column"
         justifyContent="center"
+        margin={4}
+        p={4}
+        boxShadow="lg"
+        borderRadius="md"
       >
         <Box>
           <Heading fontSize="36px" mb="10px">
@@ -85,7 +89,11 @@ function SignIn() {
             <InputRightElement>
               <Button size="sm" onClick={() => setShowPassword(!showPassword)}>
                 <Icon
-                  as={showPassword ? FaRegEye as React.ElementType : FaRegEyeSlash as React.ElementType}
+                  as={
+                    showPassword
+                      ? (FaRegEye as React.ElementType)
+                      : (FaRegEyeSlash as React.ElementType)
+                  }
                   boxSize="15px"
                 />
               </Button>
