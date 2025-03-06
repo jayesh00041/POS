@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 const createHttpError = require("http-errors");
-const User = require("../models/UserModel")
+const User = require("../models/userModel")
 
 async function isUserVarified(req, res, next){
 
