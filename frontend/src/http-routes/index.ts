@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 const api = axios.create({
-  baseURL: "http://pos-fvk1.onrender.com/api",
+  baseURL: "https://pos-fvk1.onrender.com/api",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",

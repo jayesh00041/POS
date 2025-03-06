@@ -52,7 +52,7 @@ function SignIn() {
   });
 
   return (
-    <Box width="100vw" height="100vh">
+    <Box width="100vw" height="100vh" margin="5px" p="10px" boxShadow="lg">
       <Flex
         maxW={{ base: '100%', md: '420px' }}
         w="100%"
