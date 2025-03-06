@@ -27,11 +27,14 @@ app.use(cookieParser());
 
 // CORS configuration - Corrected and Improved
 app.use(cors({
-    origin: config.frontendUrl, // Allow requests from your frontend
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"], // Allow all common HTTP methods
-    allowedHeaders: ["Content-Type", "Authorization", "Origin", "X-Requested-With", "Accept"], // Specify allowed headers
-    credentials: true, // If you are using cookies in your headers set it to true
+    origin: ["http://localhost:3000", "https://jayesh00041.github.io"], // Allow frontend URLs
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"], // Allowed methods
+    allowedHeaders: ["Content-Type", "Authorization", "Origin", "X-Requested-With", "Accept"], // Allowed headers
+    credentials: true, // Allow cookies if needed
 }));
+
+// Handle preflight requests
+app.options("*", cors());
 
 // Serve static files (uploaded images, etc.)
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
