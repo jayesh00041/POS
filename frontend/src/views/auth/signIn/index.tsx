@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IconType } from 'react-icons';
 import {
   Box,
   Button,
@@ -13,10 +12,7 @@ import {
   InputGroup,
   InputRightElement,
   Text,
-  useColorModeValue,
 } from '@chakra-ui/react';
-import DefaultAuth from 'layouts/auth/Default';
-import illustration from 'assets/img/auth/auth.png';
 import { useMutation } from '@tanstack/react-query';
 import { login } from '../../../http-routes/index';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
@@ -28,8 +24,6 @@ function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   const { loginUser } = useUser();
 
@@ -72,7 +66,6 @@ function SignIn() {
             Sign In
           </Heading>
         </Box>
-        {error && <Text color="red.500">{error}</Text>}
         <FormControl>
           <FormLabel>Email</FormLabel>
           <Input
@@ -98,7 +91,7 @@ function SignIn() {
               </Button>
             </InputRightElement>
           </InputGroup>
-          <Button mt="20px" w="100%" isLoading={loading} onClick={handleSignIn}>
+          <Button mt="20px" w="100%" onClick={handleSignIn}>
             Sign In
           </Button>
         </FormControl>

@@ -10,7 +10,6 @@ import {
   Button,
   Avatar,
   useDisclosure,
-  useToast,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -25,7 +24,6 @@ import {
   Spinner,
   Text,
 } from '@chakra-ui/react';
-import { SearchIcon } from '@chakra-ui/icons';
 import { MdDelete, MdEdit } from 'react-icons/md';
 import { FaPlus } from 'react-icons/fa';
 import ProductForm from './ProductForm';
@@ -45,11 +43,6 @@ const ProductsTable = () => {
     onOpen: onDeleteOpen,
     onClose: onDeleteClose,
   } = useDisclosure();
-  const toast = useToast();
-
-  useEffect(() => {
-    getProductsMutation.mutate();
-  }, []);
 
   const getProductsMutation = useMutation({
     mutationFn: () => getProducts(),
@@ -61,6 +54,11 @@ const ProductsTable = () => {
       enqueueSnackbar('Error fetching products', { variant: 'error' });
     },
   });
+
+  useEffect(() => {
+    getProductsMutation.mutate();
+  }, [getProductsMutation]);
+
 
   useEffect(() => {
     setFilteredProducts(
@@ -122,7 +120,7 @@ const ProductsTable = () => {
       </Flex>
 
       <TableContainer overflowY="auto" maxH="calc(100vh - 196px)">
-        {getProductsMutation.status == 'pending' ? (
+        {getProductsMutation.status === 'pending' ? (
           <Flex justify="center" align="center" height="200px">
             <Spinner size="xl" />
           </Flex>

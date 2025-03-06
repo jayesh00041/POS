@@ -15,10 +15,9 @@ import {
   VStack,
   Avatar,
   Box,
-  IconButton,
   Icon,
 } from "@chakra-ui/react";
-import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
+import { AddIcon } from "@chakra-ui/icons";
 import { MdDelete } from "react-icons/md";
 import { addOrUpdateProduct } from "http-routes";
 import { useMutation } from "@tanstack/react-query";
@@ -35,24 +34,25 @@ const ProductForm = ({ isOpen, onClose, product, setProducts }) => {
   const [variations, setVariations] = useState([]);
   const [imageFile, setImageFile] = useState(null);
 
+  const getCategoriesMutation = useMutation({
+    mutationFn: () => getCategories(),
+    onSuccess: (data: any) => {
+      const resCategories = data.data.data
+      setCategories(resCategories);
+      setSelectedCategory(product ? resCategories.find((cat) => cat._id === product.categoryId) : null);
+      if(!product){
+        setCounterNo(selectedCategory?.counterNo || "");
+      }
+    },
+    onError(error) {
+      enqueueSnackbar('Error fetching categories:', { variant: 'error' });
+    },
+  });
+
   useEffect(() => {
       getCategoriesMutation.mutate();
-    }, []);
+    }, [getCategoriesMutation]);
   
-    const getCategoriesMutation = useMutation({
-      mutationFn: () => getCategories(),
-      onSuccess: (data: any) => {
-        const resCategories = data.data.data
-        setCategories(resCategories);
-        setSelectedCategory(product ? resCategories.find((cat) => cat._id === product.categoryId) : null);
-        if(!product){
-          setCounterNo(selectedCategory?.counterNo || "");
-        }
-      },
-      onError(error) {
-        enqueueSnackbar('Error fetching categories:', { variant: 'error' });
-      },
-    });
 
   useEffect(() => {
     setName(product?.name || "");

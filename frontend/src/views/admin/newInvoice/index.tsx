@@ -1,4 +1,4 @@
-import { Box, VStack } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import NewInvoiceComponent from './components/NewInvoiceComponent';
 
 export default function Overview() {

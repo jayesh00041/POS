@@ -21,15 +21,16 @@ export default function NewInvoiceComponent() {
   const bgColor = useColorModeValue("white", "gray.800");
   const borderColor = useColorModeValue("gray.200", "gray.600");
 
-  useEffect(() => {
-    getCategoryWiseProductsMutation.mutate();
-  }, []);
-
   const getCategoryWiseProductsMutation = useMutation({
     mutationFn: () => categoryWiseProducts(),
     onSuccess: (data) => setCategories(data.data.categories),
     onError: (error: any) => enqueueSnackbar(error.data.message, { variant: "error" }),
   })
+  
+  useEffect(() => {
+    getCategoryWiseProductsMutation.mutate();
+  }, [getCategoryWiseProductsMutation]);
+
 
   return (
     <Box

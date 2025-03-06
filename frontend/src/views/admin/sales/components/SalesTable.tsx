@@ -18,12 +18,10 @@ import {
   ModalBody,
   ModalCloseButton,
   Flex,
-  Tooltip,
   Icon,
   Box,
   Text,
 } from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
 import { FaEye } from "react-icons/fa";
 import { SearchBar } from "components/navbar/searchBar/SearchBar";
 

@@ -1,10 +1,10 @@
-import { Icon, layout } from '@chakra-ui/react';
+import { Icon } from '@chakra-ui/react';
 import {
-  MdBarChart,
-  MdPerson,
+  // MdBarChart,
+  // MdPerson,
   MdHome,
   MdLock,
-  MdOutlineShoppingCart,
+  // MdOutlineShoppingCart,
   MdFoodBank,
   MdGridView,
 } from 'react-icons/md';
@@ -16,9 +16,9 @@ import Sales from 'views/admin/sales';
 import Products from 'views/admin/products';
 import Categories from 'views/admin/categories';
 import MainDashboard from 'views/admin/default';
-import NFTMarketplace from 'views/admin/marketplace';
-import Profile from 'views/admin/profile';
-import DataTables from 'views/admin/dataTables';
+// import NFTMarketplace from 'views/admin/marketplace';
+// import Profile from 'views/admin/profile';
+// import DataTables from 'views/admin/dataTables';
 
 // Auth Imports
 import SignInCentered from 'views/auth/signIn';

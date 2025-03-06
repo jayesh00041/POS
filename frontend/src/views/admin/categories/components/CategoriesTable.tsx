@@ -10,7 +10,6 @@ import {
   Button,
   Avatar,
   useDisclosure,
-  useToast,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -25,7 +24,6 @@ import {
   Spinner,
   Text,
 } from '@chakra-ui/react';
-import { SearchIcon } from '@chakra-ui/icons';
 import { MdDelete, MdEdit } from 'react-icons/md';
 import { FaPlus } from 'react-icons/fa';
 import CategoryForm from './CategoryForm';
@@ -46,11 +44,6 @@ const CategoriesTable = () => {
     onOpen: onDeleteOpen,
     onClose: onDeleteClose,
   } = useDisclosure();
-  const toast = useToast();
-
-  useEffect(() => {
-    getCategoriesMutation.mutate();
-  }, []);
 
   const getCategoriesMutation = useMutation({
     mutationFn: () => getCategories(),
@@ -63,6 +56,11 @@ const CategoriesTable = () => {
       setIsLoading(false);
     },
   });
+  
+  useEffect(() => {
+    getCategoriesMutation.mutate();
+  }, [getCategoriesMutation]);
+
 
   useEffect(() => {
     setFilteredCategories(
