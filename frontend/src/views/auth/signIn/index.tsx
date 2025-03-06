@@ -52,12 +52,11 @@ function SignIn() {
   });
 
   return (
-    <Box width="100vw" height="100vh">
+    <Box width="100vw" height="100vh" minH="100vh" display="flex" justifyContent="center" alignItems="center">
       <Flex
         maxW={{ base: '100%', md: '420px' }}
         w="100%"
         mx="auto"
-        minH="100vh"
         flexDirection="column"
         justifyContent="center"
         margin={4}

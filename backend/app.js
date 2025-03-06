@@ -25,10 +25,13 @@ app.use(express.json());
 // Middleware to parse cookies
 app.use(cookieParser());
 
-app.use(cors({
-    credentials: true,
-    origin: [config.frontendUrl],
-}))
+app.use(cors())
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS, POST, PUT, DELETE");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    next();
+});
 
 // Serve static files (uploaded images, etc.)
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
