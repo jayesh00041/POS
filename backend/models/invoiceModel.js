@@ -9,7 +9,7 @@ const VariationSchema = new Schema({
 });
 
 const CartItemSchema = new Schema({
-    id: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+    product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' }, // Renamed `id` to `product`
     productName: String,
     totalQuantity: Number,
     total: Number,
@@ -18,12 +18,14 @@ const CartItemSchema = new Schema({
 
 const CounterWiseDataSchema = new Schema({
     counterNo: Number,
+    counterTokenNumber: Number,
     items: [{
-        product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
-        variation: VariationSchema,
-        quantity: Number
-    }],
-    counterTokenNumber: Number
+        product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' }, 
+        productName: String, // Added product name
+        totalQuantity: Number, // Added total quantity
+        total: Number, // Added total amount per product
+        variations: [VariationSchema] // Changed from single object to array
+    }]
 });
 
 const InvoiceSchema = new Schema({
@@ -34,7 +36,7 @@ const InvoiceSchema = new Schema({
     referenceNumber: { type: String },
     cartItems: [CartItemSchema],
     totalAmount: { type: Number, required: true },
-    counterWiseData: { type: Map, of: CounterWiseDataSchema },
+    counterWiseData: [CounterWiseDataSchema], 
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     createdAt: { type: Date, default: Date.now }
 });

@@ -13,7 +13,6 @@ import {
   Text,
   useColorModeValue,
   useColorMode,
-  Box,
 } from '@chakra-ui/react';
 // Custom Components
 // import { ItemContent } from 'components/menu/ItemContent';
@@ -87,19 +86,7 @@ export default function HeaderLinks(props: { secondary: boolean }) {
 				me='10px'
 				borderRadius='30px'
 			/> */}
-      <Box
-        p="10px"
-        borderRadius="30px"
-        height="60px"
-        width="60px"
-        bg={menuBg}
-        boxShadow={shadow}
-		display="flex"
-		justifyContent="center"
-		alignItems="center"
-      >
         <SidebarResponsive routes={routes} />
-      </Box>
       {/* <Menu>
 				<MenuButton p='0px'>
 					<Icon mt='6px' as={MdNotificationsNone} color={navbarIcon} w='18px' h='18px' me='10px' />
@@ -160,6 +147,7 @@ export default function HeaderLinks(props: { secondary: boolean }) {
           borderRadius="20px"
           bg={menuBg}
           border="none"
+		  position="relative" zIndex="10"
         >
           <Flex w="100%" mb="0px">
             <Text

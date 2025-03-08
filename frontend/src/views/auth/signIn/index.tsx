@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -26,13 +26,19 @@ function SignIn() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const { loginUser } = useUser();
+  const { loginUser, user } = useUser();
 
   const navigate = useNavigate();
 
   const handleSignIn = async () => {
     loginMutation.mutate({ email, password });
   };
+
+  useEffect(() => {
+    if (user) {
+      navigate('/admin/');
+    }
+  }, [user, navigate]);
 
   const loginMutation = useMutation({
     mutationFn: (reqData: { email: string; password: string }) =>

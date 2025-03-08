@@ -15,17 +15,21 @@ import {
   Tr,
   Tbody,
   Td,
+  Thead,
 } from '@chakra-ui/react';
 import { useReactToPrint } from 'react-to-print';
 import { formatDate } from 'shared';
+import duplicateCopyImage from 'assets/img/layout/DuplicateCopy.jpg';
 
 const InvoicePopup = ({
   invoice,
   isOpen,
+  duplicateCopy,
   onClose,
 }: {
   invoice: any;
   isOpen: boolean;
+  duplicateCopy: boolean;
   onClose: () => void;
 }) => {
   const printRef = useRef<HTMLDivElement>(null);
@@ -44,7 +48,7 @@ const InvoicePopup = ({
     `,
   });
 
-  if(!invoice) {
+  if (!invoice) {
     return null;
   }
 
@@ -55,8 +59,16 @@ const InvoicePopup = ({
         <ModalHeader>Invoice</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Box ref={printRef}>
-            <Box borderRadius="md" boxShadow="lg" p={4} bg="white">
+          <Box
+            ref={printRef}
+            color="black"
+            bgImage={duplicateCopy ? `url(${duplicateCopyImage})` : 'none'}
+            bgColor={!duplicateCopy ? 'white' : 'none'}
+            bgRepeat="repeat-y"
+            bgSize="contain"
+            borderRadius="md" 
+          >
+            <Box borderRadius="md" boxShadow="lg" p={4}>
               {/* Business Header */}
               <Box textAlign="center" mb={4}>
                 <Text fontSize="lg" fontWeight="bold">
@@ -67,22 +79,22 @@ const InvoicePopup = ({
               </Box>
 
               {/* Customer Info */}
-              <Box mb={3} p={2} bg="gray.100" borderRadius="md">
+              <Divider borderColor="gray.800" my={3} />
+              <Box mb={3} p={2} borderRadius="md">
                 <Flex justify="space-between">
-                  <Text fontSize="sm">{invoice.invoice.invoiceNumber}</Text>
-                  <Text fontSize="sm">
-                    {formatDate(invoice.invoice.createdAt)}
-                  </Text>
+                  <Text fontSize="sm">{invoice.invoiceNumber}</Text>
+                  <Text fontSize="sm">{formatDate(invoice.createdAt)}</Text>
                 </Flex>
 
                 <Text fontSize="sm">
-                  <strong>Payment:</strong> {invoice.invoice.paymentMode}
+                  <strong>Payment:</strong> {invoice.paymentMode}
                 </Text>
               </Box>
 
               {/* Cart Items */}
+              <Divider borderColor="gray.800" my={3} />
               <Box mb={4}>
-                {invoice.invoice.cartItems.map((item: any) => (
+                {invoice.cartItems.map((item: any) => (
                   <Box key={item.id} p={2}>
                     {item.variations.length === 1 &&
                     item.variations[0].name === 'Default' ? (
@@ -116,19 +128,23 @@ const InvoicePopup = ({
               </Box>
 
               {/* Total Amount */}
-              <Divider my={3} />
+              <Divider borderColor="gray.800" my={3} />
               <Flex justify="space-between" fontWeight="bold">
                 <Text>Total:</Text>
-                <Text>₹{invoice.invoice.totalAmount}</Text>
+                <Text>₹{invoice.totalAmount}</Text>
               </Flex>
 
               {/* counter token numbers */}
-              <Divider my={3} />
+              <Divider borderColor="gray.800" my={3} />
               <Table variant="unstyled" width="100%">
+                <Thead>
+                  <Tr>
+                    <Td></Td>
+                    <Td textAlign="end">Token Number</Td>
+                  </Tr>
+                </Thead>
                 <Tbody>
-                  {Object.values(
-                    invoice.counterToken as Record<string, any>,
-                  ).map((token, index) => (
+                  {invoice.counterWiseData.map((token, index) => (
                     <Tr key={token.counterNo || index}>
                       {' '}
                       {/* Ensure unique key */}
@@ -166,73 +182,70 @@ const InvoicePopup = ({
             </Box>
 
             {/* Counter Token  */}
-            {Object.values(invoice.counterToken as Record<string, any>).map(
-              (counter, index) => (
-                <Box
-                  key={counter.counterNo || index} // Unique key
-                  mt={4}
-                  className="page-break"
-                  borderRadius="md"
-                  boxShadow="lg"
-                  p={4}
-                  bg="white"
-                >
-                  <Flex justifyContent="space-between">
-                    <Text fontSize="sm" fontWeight="bold">
-                      Counter: {counter.counterNo}
-                    </Text>
-                    <Box
-                      border="1px"
-                      borderRadius="50%"
-                      width="35px"
-                      height="35px"
-                      fontSize="xl"
-                      textAlign="center"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      {counter.counterTokenNumber}
-                    </Box>
-                  </Flex>
-                  <Box mt={2} p={2} bg="gray.100" borderRadius="md">
-                    {counter.items.map((item: any, idx: number) => (
-                      <Box key={item.id || idx} p={2}>
-                        {' '}
-                        {/* Ensure unique key */}
-                        {item.variations.length === 1 &&
-                        item.variations[0].name === 'Default' ? (
-                          <Flex justify="space-between">
-                            <Text fontSize="sm" fontWeight="bold">
-                              {item.productName} x {item.totalQuantity}
-                            </Text>
-                          </Flex>
-                        ) : (
-                          <>
-                            <Text fontSize="sm" fontWeight="bold">
-                              {item.productName}
-                            </Text>
-                            {item.variations.map(
-                              (variation: any, vIdx: number) => (
-                                <Flex
-                                  key={variation._id || vIdx}
-                                  justify="space-between"
-                                  ml="8px"
-                                >
-                                  <Text fontSize="xs" color="gray.500">
-                                    {variation.name} x {variation.quantity}
-                                  </Text>
-                                </Flex>
-                              ),
-                            )}
-                          </>
-                        )}
-                      </Box>
-                    ))}
+            {invoice.counterWiseData.map((counter, index) => (
+              <Box
+                key={counter.counterNo || index} // Unique key
+                mt={4}
+                className="page-break"
+                borderRadius="md"
+                boxShadow="lg"
+                p={4}
+              >
+                <Flex justifyContent="space-between">
+                  <Text fontSize="sm" fontWeight="bold">
+                    Counter: {counter.counterNo}
+                  </Text>
+                  <Box
+                    border="1px"
+                    borderRadius="50%"
+                    width="35px"
+                    height="35px"
+                    fontSize="xl"
+                    textAlign="center"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    {counter.counterTokenNumber}
                   </Box>
+                </Flex>
+                <Box mt={2} p={2} borderRadius="md">
+                  {counter.items.map((item: any, idx: number) => (
+                    <Box key={item.id || idx} p={2}>
+                      {' '}
+                      {/* Ensure unique key */}
+                      {item.variations.length === 1 &&
+                      item.variations[0].name === 'Default' ? (
+                        <Flex justify="space-between">
+                          <Text fontSize="sm" fontWeight="bold">
+                            {item.productName} x {item.totalQuantity}
+                          </Text>
+                        </Flex>
+                      ) : (
+                        <>
+                          <Text fontSize="sm" fontWeight="bold">
+                            {item.productName}
+                          </Text>
+                          {item.variations.map(
+                            (variation: any, vIdx: number) => (
+                              <Flex
+                                key={variation._id || vIdx}
+                                justify="space-between"
+                                ml="8px"
+                              >
+                                <Text fontSize="xs" color="gray.500">
+                                  {variation.name} x {variation.quantity}
+                                </Text>
+                              </Flex>
+                            ),
+                          )}
+                        </>
+                      )}
+                    </Box>
+                  ))}
                 </Box>
-              ),
-            )}
+              </Box>
+            ))}
           </Box>
 
           {/* Buttons */}

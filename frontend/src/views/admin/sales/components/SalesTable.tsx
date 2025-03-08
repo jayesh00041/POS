@@ -167,6 +167,7 @@ const SalesTable = () => {
       <InvoicePopup
         isOpen={showInvoice}
         invoice={selectedInvoice}
+        duplicateCopy={true}
         onClose={() => setShowInvoice(false)}
       />
     </Box>

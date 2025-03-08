@@ -104,9 +104,9 @@ const createInvoice = async (req, res, next) => {
         for (const [counterNo, data] of counterWiseData) {
             data.counterTokenNumber = counterTokenMap.get(counterNo);
             data.items = Array.from(data.items.values()); // Convert Map to array
-            console.log(data.items);
         }
 
+        console.log(counterWiseData);
 
         // Create invoice
         const invoice = await Invoice.create({
@@ -117,15 +117,16 @@ const createInvoice = async (req, res, next) => {
             referenceNumber,
             cartItems: Array.from(itemMap.values()),
             totalAmount: calculatedTotal,
-            counterWiseData: Object.fromEntries(counterWiseData),
+            counterWiseData: Array.from(counterWiseData.values()), // ✅ Fix applied here
             createdBy: invoiceCreatorId
-        });
+        });        
+
+        const dbInvoice = await Invoice.findById(invoice._id)
+            .populate('createdBy', 'name')
 
         res.status(200).json({
             status: "success",
-            invoice,
-            customer: { customerName, mobileNumber },
-            counterToken: Object.fromEntries(counterWiseData)
+            invoice: dbInvoice,
         });
     } catch (error) {
         next(error);

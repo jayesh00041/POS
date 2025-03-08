@@ -16,6 +16,7 @@ import {
   useDisclosure,
   Icon,
   Spinner,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { FaShoppingCart } from 'react-icons/fa';
 import { useCart } from 'contexts/CartContext';
@@ -49,11 +50,12 @@ export default function CartComponent() {
 
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
 
+  let textColor = useColorModeValue('secondaryGray.500', 'white');
+
   const createInvoiceMutation = useMutation({
     mutationFn: async (formData: any) => createInvoice(formData),
     onSuccess: (data) => {
-      setInvoiceData(data.data);
-      clearCart();
+      setInvoiceData(data.data.invoice);
     },
     onError: (error) =>
       enqueueSnackbar('Error creating invoice', { variant: 'error' }),
@@ -156,7 +158,7 @@ export default function CartComponent() {
                     item.variations.map((variation, index) => (
                       <>
                         {index === 0 ? (
-                          <Text fontSize="sm" fontWeight="bold">
+                          <Text fontSize="sm" fontWeight="bold" color="black">
                             {item.product.name}
                           </Text>
                         ) : (
@@ -172,7 +174,7 @@ export default function CartComponent() {
                             {variation.selectedVariation.name} x{' '}
                             {variation.quantity}
                           </Text>
-                          <Text fontSize="sm">
+                          <Text fontSize="sm" color="black">
                             ₹
                             {variation.selectedVariation.price *
                               variation.quantity}
@@ -195,11 +197,11 @@ export default function CartComponent() {
                     ))
                   ) : (
                     <Flex align="center" justify="space-between">
-                      <Text fontSize="sm" fontWeight="bold">
+                      <Text fontSize="sm" fontWeight="bold" color="black">
                         {item.product.name} x {item.quantity}
                       </Text>
 
-                      <Text fontSize="sm">
+                      <Text fontSize="sm" color="black">
                         ₹{item.product.price * item.quantity}
                         <Button
                           size="xs"
@@ -214,10 +216,10 @@ export default function CartComponent() {
                   )}
                 </Box>
               ))}
-              <Divider my={3} />
+              <Divider my={3} borderColor="gray.300" />
               <Flex justify="space-between" fontWeight="bold">
-                <Text>Total:</Text>
-                <Text>₹{totalPrice}</Text>
+                <Text color="black">Total:</Text>
+                <Text color="black">₹{totalPrice}</Text>
               </Flex>
             </Box>
             <Box mt={4}>
@@ -226,6 +228,7 @@ export default function CartComponent() {
               </Text>
               <Input
                 size="sm"
+                color={textColor}
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 placeholder="Enter name"
@@ -239,6 +242,7 @@ export default function CartComponent() {
                 size="sm"
                 type="number"
                 value={mobileNumber}
+                color={textColor}
                 onChange={(e) => setMobileNumber(e.target.value)}
                 placeholder="Enter mobile number"
               />
@@ -251,6 +255,7 @@ export default function CartComponent() {
                 size="sm"
                 value={paymentMode}
                 onChange={handlePaymentModeChange}
+                color={textColor}
               >
                 <option value="cash">Cash</option>
                 <option value="online">Online</option>
@@ -339,6 +344,7 @@ export default function CartComponent() {
       <InvoicePopup
         isOpen={showInvoice}
         invoice={invoiceData}
+        duplicateCopy={false}
         onClose={() => {
           clearCart();
           setInvoiceData(null);
