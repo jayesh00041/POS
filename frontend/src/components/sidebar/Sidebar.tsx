@@ -72,9 +72,8 @@ export function SidebarResponsive(props: { routes: RoutesType[] }) {
 					as={IoMenuOutline as React.ElementType}
 					color={menuColor}
 					my='auto'
-					w='20px'
-					h='20px'
-					me='10px'
+					w='25px'
+					h='25px'
 					_hover={{ cursor: 'pointer' }}
 				/>
 			</Flex>

@@ -125,6 +125,7 @@ const SalesTable = () => {
                 <Th>Payment Mode</Th>
                 <Th>Date Time</Th>
                 <Th>Amount</Th>
+                <Th>Biller</Th>
                 <Th>Actions</Th>
               </Tr>
             </Thead>
@@ -140,6 +141,7 @@ const SalesTable = () => {
                   </Td>
                   <Td>{formatDate(invoice.createdAt)}</Td>
                   <Td>₹{invoice.totalAmount}</Td>
+                  <Td>{invoice.createdBy.name}</Td>
                   <Td>
                     <Button
                       colorScheme="blue"
