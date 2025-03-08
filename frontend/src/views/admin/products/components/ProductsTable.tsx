@@ -54,11 +54,11 @@ const ProductsTable = () => {
       enqueueSnackbar('Error fetching products', { variant: 'error' });
     },
   });
-
+  
   useEffect(() => {
     getProductsMutation.mutate();
-  }, [getProductsMutation]);
-
+  // eslint-disable-next-line
+  }, []);
 
   useEffect(() => {
     setFilteredProducts(

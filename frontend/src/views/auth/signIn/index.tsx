@@ -11,6 +11,7 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Spinner,
   Text,
 } from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
@@ -98,8 +99,8 @@ function SignIn() {
               </Button>
             </InputRightElement>
           </InputGroup>
-          <Button mt="20px" w="100%" onClick={handleSignIn}>
-            Sign In
+          <Button mt="20px" w="100%" onClick={handleSignIn} disabled={loginMutation.isPending}>
+            {loginMutation.isPending ? (<Spinner size="sm" />) : "Sign In" }
           </Button>
         </FormControl>
         <Text mt="10px">

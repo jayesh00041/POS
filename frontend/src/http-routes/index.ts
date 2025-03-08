@@ -34,3 +34,4 @@ export const deleteProduct = (id) => api.delete(`/product/${id}`);
 export const categoryWiseProducts = () => api.get(`/product/categoryWiseProducts`);
 
 export const createInvoice = (data) => api.post("/invoice/", data);
+export const getSalesData = (startDate, endDate) => api.get(`/invoice?startDate=${startDate}&endDate=${endDate}`);

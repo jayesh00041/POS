@@ -104,7 +104,9 @@ const createInvoice = async (req, res, next) => {
         for (const [counterNo, data] of counterWiseData) {
             data.counterTokenNumber = counterTokenMap.get(counterNo);
             data.items = Array.from(data.items.values()); // Convert Map to array
+            console.log(data.items);
         }
+
 
         // Create invoice
         const invoice = await Invoice.create({
@@ -133,8 +135,30 @@ const createInvoice = async (req, res, next) => {
 
 const getSalesTableData = async (req, res, next) => {
     try {
-        const invoices = await Invoice.find().populate("cartItems.product");
-        res.status(200).json({ status: "success", data: invoices });
+        // Get date range params
+        const startDate = req.query.startDate ? new Date(req.query.startDate) : null;
+        const endDate = req.query.endDate ? new Date(req.query.endDate) : null;
+
+        // Build filter object
+        let dateFilter = {};
+        if (startDate && endDate) {
+            dateFilter = {
+                createdAt: {
+                    $gte: startDate,
+                    $lte: new Date(endDate.setHours(23, 59, 59))
+                }
+            };
+        }
+
+        // Get all filtered results
+        const invoices = await Invoice.find(dateFilter)
+            .populate('createdBy', 'name')
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({ 
+            status: "success", 
+            data: invoices
+        });
     } catch (error) {
         next(createHttpError(500, "Error fetching sales data"));
     }

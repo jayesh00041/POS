@@ -51,7 +51,8 @@ const ProductForm = ({ isOpen, onClose, product, setProducts }) => {
 
   useEffect(() => {
       getCategoriesMutation.mutate();
-    }, [getCategoriesMutation]);
+    // eslint-disable-next-line
+    }, []);
   
 
   useEffect(() => {

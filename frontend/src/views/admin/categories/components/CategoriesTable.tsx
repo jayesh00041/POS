@@ -59,7 +59,8 @@ const CategoriesTable = () => {
   
   useEffect(() => {
     getCategoriesMutation.mutate();
-  }, [getCategoriesMutation]);
+    // eslint-disable-next-line
+  }, []);
 
 
   useEffect(() => {

@@ -26,6 +26,7 @@ type CartContextType = {
   cart: { [key: string]: CartItem };
   addToCart: (product: Product, variation?: Variation) => void;
   removeFromCart: (productId: number, variationId?: string) => void;
+  clearCart: () => void;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -61,12 +62,16 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
+  const clearCart = () => {
+    setCart({});
+  };
+
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart }}>
       {children}
     </CartContext.Provider>
   );
-};
+}
 
 export const useCart = () => {
   const context = useContext(CartContext);

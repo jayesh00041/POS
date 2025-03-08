@@ -26,6 +26,7 @@
     "framer-motion": "^11.3.7",
     "notistack": "^3.0.2",
     "npm-force-resolutions": "^0.0.10",
+    "qrcode.react": "^4.2.0",
     "react": "19.0.0",
     "react-apexcharts": "1.4.1",
     "react-calendar": "^5.0.0",

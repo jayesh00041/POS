@@ -14,15 +14,18 @@ import {
   Table,
   Tr,
   Tbody,
-  Td
+  Td,
 } from '@chakra-ui/react';
 import { useReactToPrint } from 'react-to-print';
+import { formatDate } from 'shared';
 
 const InvoicePopup = ({
   invoice,
+  isOpen,
   onClose,
 }: {
   invoice: any;
+  isOpen: boolean;
   onClose: () => void;
 }) => {
   const printRef = useRef<HTMLDivElement>(null);
@@ -41,34 +44,12 @@ const InvoicePopup = ({
     `,
   });
 
-  const formatDate = (isoString) => {
-    const date = new Date(isoString);
-
-    const options = { timeZone: 'Asia/Kolkata' };
-    const day = date.toLocaleString('en-IN', { day: '2-digit', ...options });
-    const month = date.toLocaleString('en-IN', {
-      month: '2-digit',
-      ...options,
-    });
-    const year = date.toLocaleString('en-IN', { year: 'numeric', ...options });
-
-    let hours = date
-      .toLocaleString('en-IN', { hour: '2-digit', hour12: true, ...options })
-      .split(' ')[0];
-    let minutes = date.toLocaleString('en-IN', {
-      minute: '2-digit',
-      ...options,
-    });
-    let ampm = date
-      .toLocaleString('en-IN', { hour: '2-digit', hour12: true, ...options })
-      .split(' ')[1]
-      .toLowerCase();
-
-    return `${day}/${month}/${year} ${hours}:${minutes}${ampm}`;
-  };
+  if(!invoice) {
+    return null;
+  }
 
   return (
-    <Modal isOpen={true} onClose={onClose} size="lg" isCentered>
+    <Modal isOpen={isOpen} onClose={onClose} size="lg" isCentered>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Invoice</ModalHeader>
@@ -147,8 +128,10 @@ const InvoicePopup = ({
                 <Tbody>
                   {Object.values(
                     invoice.counterToken as Record<string, any>,
-                  ).map((token) => (
-                    <Tr key={token.counterNo}>
+                  ).map((token, index) => (
+                    <Tr key={token.counterNo || index}>
+                      {' '}
+                      {/* Ensure unique key */}
                       <Td fontSize="sm" padding="2px">
                         Counter Number: {token.counterNo}
                       </Td>
@@ -184,9 +167,9 @@ const InvoicePopup = ({
 
             {/* Counter Token  */}
             {Object.values(invoice.counterToken as Record<string, any>).map(
-              (counter: any) => (
+              (counter, index) => (
                 <Box
-                  key={counter.counterNo}
+                  key={counter.counterNo || index} // Unique key
                   mt={4}
                   className="page-break"
                   borderRadius="md"
@@ -214,7 +197,9 @@ const InvoicePopup = ({
                   </Flex>
                   <Box mt={2} p={2} bg="gray.100" borderRadius="md">
                     {counter.items.map((item: any, idx: number) => (
-                      <Box key={item.id} p={2}>
+                      <Box key={item.id || idx} p={2}>
+                        {' '}
+                        {/* Ensure unique key */}
                         {item.variations.length === 1 &&
                         item.variations[0].name === 'Default' ? (
                           <Flex justify="space-between">
@@ -227,17 +212,19 @@ const InvoicePopup = ({
                             <Text fontSize="sm" fontWeight="bold">
                               {item.productName}
                             </Text>
-                            {item.variations.map((variation: any) => (
-                              <Flex
-                                key={variation._id}
-                                justify="space-between"
-                                ml="8px"
-                              >
-                                <Text fontSize="xs" color="gray.500">
-                                  {variation.name} x {variation.quantity}
-                                </Text>
-                              </Flex>
-                            ))}
+                            {item.variations.map(
+                              (variation: any, vIdx: number) => (
+                                <Flex
+                                  key={variation._id || vIdx}
+                                  justify="space-between"
+                                  ml="8px"
+                                >
+                                  <Text fontSize="xs" color="gray.500">
+                                    {variation.name} x {variation.quantity}
+                                  </Text>
+                                </Flex>
+                              ),
+                            )}
                           </>
                         )}
                       </Box>

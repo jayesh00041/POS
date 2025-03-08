@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Text,
@@ -15,15 +15,29 @@ import {
   Divider,
   useDisclosure,
   Icon,
+  Spinner,
 } from '@chakra-ui/react';
 import { FaShoppingCart } from 'react-icons/fa';
 import { useCart } from 'contexts/CartContext';
 import { useMutation } from '@tanstack/react-query';
 import { createInvoice } from '../../../../http-routes/';
 import InvoicePopup from '../../../../components/invoice/InvoicePopup';
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
+} from '@chakra-ui/react';
+import qrImage from 'assets/img/jj-icon.png';
+
+import { QRCodeCanvas } from 'qrcode.react';
+import { enqueueSnackbar } from 'notistack';
 
 export default function CartComponent() {
-  const { cart, removeFromCart } = useCart();
+  const { cart, removeFromCart, clearCart } = useCart();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [customerName, setCustomerName] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
@@ -33,15 +47,26 @@ export default function CartComponent() {
   const [showInvoice, setShowInvoice] = useState(false);
   const [invoiceData, setInvoiceData] = useState(null);
 
+  const [isQRModalOpen, setIsQRModalOpen] = useState(false);
+
   const createInvoiceMutation = useMutation({
-    mutationFn: (formData: any) => createInvoice(formData),
+    mutationFn: async (formData: any) => createInvoice(formData),
     onSuccess: (data) => {
-      setShowInvoice(true);
       setInvoiceData(data.data);
+      clearCart();
     },
-    onError: (error) => console.error('Error creating invoice:', error),
+    onError: (error) =>
+      enqueueSnackbar('Error creating invoice', { variant: 'error' }),
   });
 
+  useEffect(() => {
+    if (invoiceData) 
+      setShowInvoice(true);
+    else
+      setShowInvoice(false);
+
+  }, [invoiceData]);
+  
   const totalItems = Object.values(cart).reduce(
     (sum, item) => sum + item.quantity,
     0,
@@ -52,7 +77,7 @@ export default function CartComponent() {
       (item.selectedVariation?.price || item.product.price) * item.quantity,
     0,
   );
-
+  
   if (totalItems === 0) return null;
 
   const groupedCart = Object.values(cart).reduce((acc, item) => {
@@ -63,7 +88,7 @@ export default function CartComponent() {
     if (item.selectedVariation) {
       acc[key].variations.push(item);
     }
-    
+
     return acc;
   }, {});
 
@@ -80,6 +105,25 @@ export default function CartComponent() {
     onClose();
   };
 
+  const upiUrl = `upi://pay?pa=madanmistry1@ybl&pn=Juicy Jalso&am=${totalPrice}&tn=Juicy Jalso payment&cu=INR`;
+
+  const handlePaymentModeChange = (e) => {
+    setPaymentMode(e.target.value);
+    if (e.target.value === 'online') {
+      setIsQRModalOpen(true);
+    }
+  };
+
+  const handleApprovePayment = () => {
+    setIsQRModalOpen(false);
+    handleCreateInvoice();
+  };
+
+  const handdleQrModalClose = () => {
+    setIsQRModalOpen(false);
+    setPaymentMode('cash');
+  }
+  
   return (
     <>
       <Flex
@@ -111,35 +155,42 @@ export default function CartComponent() {
                   {item.variations.length > 0 ? (
                     item.variations.map((variation, index) => (
                       <>
-                      {
-                        (index === 0) ? <Text fontSize="sm" fontWeight="bold">{item.product.name}</Text> : <></>
-                      }
-                      <Flex
-                        key={variation.selectedVariation?._id}
-                        align="center"
-                        justify="space-between"
-                        ml={4}
-                      >
-                        <Text fontSize="xs" color="gray.600">
-                          {variation.selectedVariation.name} x {variation.quantity}
-                        </Text>
-                        <Text fontSize="sm">
-                          ₹{variation.selectedVariation.price * variation.quantity}
-                          <Button
-                            size="xs"
-                            colorScheme="whiteAlpha"
-                            textColor="red"
-                            onClick={() =>
-                              removeFromCart(
-                                variation.product.id,
-                                variation.selectedVariation?._id,
-                              )
-                            }
-                          >
-                            x
-                          </Button>
-                        </Text>
-                      </Flex>
+                        {index === 0 ? (
+                          <Text fontSize="sm" fontWeight="bold">
+                            {item.product.name}
+                          </Text>
+                        ) : (
+                          <></>
+                        )}
+                        <Flex
+                          key={variation.selectedVariation?._id}
+                          align="center"
+                          justify="space-between"
+                          ml={4}
+                        >
+                          <Text fontSize="xs" color="gray.600">
+                            {variation.selectedVariation.name} x{' '}
+                            {variation.quantity}
+                          </Text>
+                          <Text fontSize="sm">
+                            ₹
+                            {variation.selectedVariation.price *
+                              variation.quantity}
+                            <Button
+                              size="xs"
+                              colorScheme="whiteAlpha"
+                              textColor="red"
+                              onClick={() =>
+                                removeFromCart(
+                                  variation.product.id,
+                                  variation.selectedVariation?._id,
+                                )
+                              }
+                            >
+                              x
+                            </Button>
+                          </Text>
+                        </Flex>
                       </>
                     ))
                   ) : (
@@ -199,25 +250,12 @@ export default function CartComponent() {
               <Select
                 size="sm"
                 value={paymentMode}
-                onChange={(e) => setPaymentMode(e.target.value)}
+                onChange={handlePaymentModeChange}
               >
                 <option value="cash">Cash</option>
                 <option value="online">Online</option>
               </Select>
             </Box>
-            {paymentMode === 'online' && (
-              <Box mt={3}>
-                <Text fontSize="sm" mb={1}>
-                  Reference Number
-                </Text>
-                <Input
-                  size="sm"
-                  value={referenceNumber}
-                  onChange={(e) => setReferenceNumber(e.target.value)}
-                  placeholder="Enter reference number"
-                />
-              </Box>
-            )}
             <Button
               mt={4}
               colorScheme="green"
@@ -230,10 +268,82 @@ export default function CartComponent() {
           </DrawerBody>
         </DrawerContent>
       </Drawer>
-      <div>
-          {showInvoice && (
-              <InvoicePopup invoice={invoiceData} onClose={() => setShowInvoice(false)} />
-          )}
-      </div>
+
+      
+
+      <Modal isOpen={isQRModalOpen} onClose={handdleQrModalClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Scan to Pay</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Box display="flex" justifyContent="center">
+              <QRCodeCanvas
+                value={upiUrl}
+                size={200}
+                bgColor="#ffffff"
+                fgColor="#000000"
+                imageSettings={{
+                  src: qrImage,
+                  height: 40, // Image height in pixels
+                  width: 40, // Image width in pixels
+                  excavate: true, // Makes the background of the image transparent
+                }}
+              />
+            </Box>
+            <Text mt={3} textAlign="center">
+              Amount: ₹{totalPrice}
+            </Text>
+            <Box mt={3}>
+              <Text fontSize="sm" mb={1}>
+                Reference Number
+              </Text>
+              <Input
+                size="sm"
+                value={referenceNumber}
+                onChange={(e) => setReferenceNumber(e.target.value)}
+                placeholder="Enter reference number"
+              />
+            </Box>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="green" mr={3} onClick={handleApprovePayment}>
+              Approve
+            </Button>
+            <Button
+              colorScheme="red"
+              onClick={handdleQrModalClose}
+            >
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {createInvoiceMutation.status === 'pending' && (
+        <Flex
+          position="fixed"
+          top="0"
+          left="0"
+          width="100vw"
+          height="100vh"
+          backgroundColor="rgba(255, 255, 255, 0.8)" // Semi-transparent background
+          justify="center"
+          align="center"
+          zIndex="9999"
+        >
+          <Spinner size="xl" thickness="4px" speed="0.65s" color="blue.500" />
+        </Flex>
+      )}
+      
+      <InvoicePopup
+        isOpen={showInvoice}
+        invoice={invoiceData}
+        onClose={() => {
+          clearCart();
+          setInvoiceData(null);
+        }}
+      />
     </>
-  );}
+  );
+}

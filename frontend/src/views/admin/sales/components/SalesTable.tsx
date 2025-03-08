@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Table,
   Thead,
@@ -8,52 +8,69 @@ import {
   Td,
   TableContainer,
   Button,
-  Avatar,
-  useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
   Flex,
   Icon,
   Box,
   Text,
-} from "@chakra-ui/react";
-import { FaEye } from "react-icons/fa";
-import { SearchBar } from "components/navbar/searchBar/SearchBar";
+  Spinner,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverBody,
+  PopoverArrow,
+} from '@chakra-ui/react';
+import { FaCalendar, FaEye } from 'react-icons/fa';
+import { SearchBar } from 'components/navbar/searchBar/SearchBar';
+import { useMutation } from '@tanstack/react-query';
+import { enqueueSnackbar } from 'notistack';
+import { getSalesData } from 'http-routes';
+import MiniCalendar from 'components/calendar/MiniCalendar';
+import { formatDate } from 'shared';
+import InvoicePopup from 'components/invoice/InvoicePopup';
 
 const SalesTable = () => {
   const [invoices, setInvoices] = useState([]);
   const [filteredInvoices, setFilteredInvoices] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedInvoice, setSelectedInvoice] = useState(null);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedDate, setSelectedDate] = useState({
+    startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)),
+    endDate: new Date(),
+  });
+  const [showInvoice, setShowInvoice] = useState(false);
+
+  const getSalesDataMutation = useMutation({
+    mutationFn: (selectedDate: any[]) =>
+      getSalesData(selectedDate[0], selectedDate[1]),
+    onSuccess: (data: any) => {
+      setInvoices(data.data.data);
+    },
+    onError: (error) => {
+      enqueueSnackbar('Error fetching sales data', { variant: 'error' });
+    },
+  });
 
   useEffect(() => {
-    fetch(process.env.GET_SALES_API || "https://mocki.io/v1/10ac14ae-503d-40f4-b606-eab0d6d93db9")
-      .then((response) => response.json())
-      .then((data) => {
-        setInvoices(data);
-        setFilteredInvoices(data);
-      })
-      .catch((error) => console.error("Error fetching invoices:", error));
-  }, []);
+    getSalesDataMutation.mutate([selectedDate.startDate, selectedDate.endDate]);
+    // eslint-disable-next-line
+  }, [selectedDate]);
 
   useEffect(() => {
     setFilteredInvoices(
       invoices.filter((invoice) =>
-        invoice.customerName.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+        invoice.customerName.toLowerCase().includes(searchTerm.toLowerCase()),
+      ),
     );
   }, [searchTerm, invoices]);
 
   const handleView = (invoice) => {
     setSelectedInvoice(invoice);
-    onOpen();
+    setShowInvoice(true);
   };
+
+  function handdleDateChange(date: Date | [Date, Date]) {
+    setSelectedDate({ startDate: date[0], endDate: date[1] });
+  }
 
   return (
     <Box>
@@ -62,98 +79,94 @@ const SalesTable = () => {
           placeholder="Search Customer"
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+        <Popover placement="bottom-start">
+          <PopoverTrigger>
+            <Button
+              colorScheme="brand"
+              height="50px"
+              width="50px"
+              borderRadius="50%"
+            >
+              <Icon as={FaCalendar as React.ElementType} />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <PopoverArrow />
+            <PopoverBody>
+              <MiniCalendar
+                selectRange={true}
+                maxDate={new Date()}
+                onDateChange={(date) => {
+                  handdleDateChange(date);
+                }}
+              />
+            </PopoverBody>
+          </PopoverContent>
+        </Popover>
       </Flex>
 
       <TableContainer overflowY="auto" maxH="calc(100vh - 196px)">
-        <Table variant="striped">
-          <Thead position="sticky" top={0} bg="white" zIndex={1}>
-            <Tr>
-              <Th>Products</Th>
-              <Th>Invoice No.</Th>
-              <Th>Amount</Th>
-              <Th>Payment Mode</Th>
-              <Th>Customer Name</Th>
-              <Th>Invoice Type</Th>
-              <Th>Actions</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {filteredInvoices.map((invoice) => (
-              <Tr key={invoice.id}>
-                <Td>
-                  <Flex>
-                    {invoice.products.slice(0, 3).map((product, index) => (
-                      <Avatar
-                        key={index}
-                        size="sm"
-                        name={product.name}
-                        src={product.imageUrl || ""}
-                        ml={index > 0 ? -2 : 0}
-                      />
-                    ))}
-                    {invoice.products.length > 3 && (
-                      <Text ml={2}>+{invoice.products.length - 3}</Text>
-                    )}
-                  </Flex>
-                </Td>
-                <Td>{invoice.invoiceId}</Td>
-                <Td>₹{invoice.amount}</Td>
-                <Td>{invoice.paymentMode}</Td>
-                <Td>{invoice.customerName}</Td>
-                <Td>
-                  <Text
-                    fontWeight="bold"
-                    color={invoice.invoiceType === "Sale" ? "green.500" : "red.500"}
-                  >
-                    {invoice.invoiceType}
-                  </Text>
-                </Td>
-                <Td>
-                  <Button
-                    colorScheme="blue"
-                    size="sm"
-                    onClick={() => handleView(invoice)}
-                  >
-                    <Icon as={FaEye as React.ElementType} width="15px" height="15px" />
-                  </Button>
-                </Td>
+        {getSalesDataMutation.isPending ? (
+          <Flex justify="center" align="center" height="200px">
+            <Spinner size="xl" />
+          </Flex>
+        ) : filteredInvoices.length === 0 ? (
+          <Flex justify="center" align="center" height="200px">
+            <Text fontSize="lg" color="gray.500">
+              No invoices found.
+            </Text>
+          </Flex>
+        ) : (
+          <Table variant="striped">
+            <Thead position="sticky" top={0} bg="white" zIndex={1}>
+              <Tr>
+                <Th>Invoice No.</Th>
+                <Th>Customer Name</Th>
+                <Th>Payment Mode</Th>
+                <Th>Date Time</Th>
+                <Th>Amount</Th>
+                <Th>Actions</Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
+            </Thead>
+            <Tbody>
+              {filteredInvoices.map((invoice) => (
+                <Tr key={invoice._id}>
+                  <Td>{invoice.invoiceNumber}</Td>
+                  <Td>{invoice.customerName || '-'}</Td>
+                  <Td>
+                    {invoice.paymentMode}{' '}
+                    {invoice.referenceNumber !== '' &&
+                      `(${invoice.referenceNumber})`}
+                  </Td>
+                  <Td>{formatDate(invoice.createdAt)}</Td>
+                  <Td>₹{invoice.totalAmount}</Td>
+                  <Td>
+                    <Button
+                      colorScheme="blue"
+                      size="sm"
+                      onClick={() => handleView(invoice)}
+                    >
+                      <Icon
+                        as={FaEye as React.ElementType}
+                        width="15px"
+                        height="15px"
+                      />
+                    </Button>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        )}
       </TableContainer>
 
       {/* Invoice Details Modal */}
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Invoice Details</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {selectedInvoice && (
-              <>
-                <Text><strong>Invoice No:</strong> {selectedInvoice.invoiceNumber}</Text>
-                <Text><strong>Customer Name:</strong> {selectedInvoice.customerName}</Text>
-                <Text><strong>Amount:</strong> ₹{selectedInvoice.amount}</Text>
-                <Text><strong>Payment Mode:</strong> {selectedInvoice.paymentMode}</Text>
-                <Text><strong>Invoice Type:</strong> {selectedInvoice.type}</Text>
-                <Text><strong>Products:</strong></Text>
-                {selectedInvoice.products.map((product: any, index: number) => (
-                  <Flex key={index} alignItems="center" mt={2}>
-                    <Avatar size="sm" src={product.imageUrl || ""} mr={2} />
-                    <Text>{product.name}</Text>
-                  </Flex>
-                ))}
-              </>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" onClick={onClose}>
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+
+      <InvoicePopup
+        isOpen={showInvoice}
+        invoice={selectedInvoice}
+        onClose={() => setShowInvoice(false)}
+      />
     </Box>
   );
 };
