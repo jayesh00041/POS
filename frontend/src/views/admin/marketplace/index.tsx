@@ -29,8 +29,8 @@ import { Box, Button, Flex, Grid, Link, Text, useColorModeValue, SimpleGrid } fr
 import Banner from 'views/admin/marketplace/components/Banner';
 import TableTopCreators from 'views/admin/marketplace/components/TableTopCreators';
 import HistoryItem from 'views/admin/marketplace/components/HistoryItem';
-import NFT from 'components/card/NFT';
-import Card from 'components/card/Card';
+import NFT from '../../../components/card/NFT';
+import Card from '../../../components/card/Card';
 
 // Assets
 import Nft1 from 'assets/img/nfts/Nft1.png';

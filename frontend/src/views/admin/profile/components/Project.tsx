@@ -1,7 +1,7 @@
 // Chakra imports
 import { Box, Flex, Icon, Image, Link, Text, useColorModeValue } from '@chakra-ui/react';
 // Custom components
-import Card from 'components/card/Card';
+import Card from '../../../../components/card/Card';
 // Assets
 import { MdEdit } from 'react-icons/md';
 

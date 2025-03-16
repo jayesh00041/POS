@@ -34,7 +34,23 @@ const InvoicePopup = ({
 }) => {
   const printRef = useRef<HTMLDivElement>(null);
 
-  const handlePrint = useReactToPrint({
+  const handlePrint = function (target) {
+    return new Promise(() => {
+      console.log("forwarding print request to the main process...");
+
+      const data = target.contentWindow.document.documentElement.outerHTML;
+      //console.log(data);
+      const blob = new Blob([data], {type: "text/html"});
+      const url = URL.createObjectURL(blob);
+
+      (window as any).electronAPI.printComponent(url, (response) => {
+        console.log("Main: ", response);
+      });
+      //console.log('Main: ', data);
+    });
+  };
+
+  const handleInvoicePrint = useReactToPrint({
     contentRef: printRef,
     pageStyle: `
       @page {
@@ -46,6 +62,7 @@ const InvoicePopup = ({
         .page-break { page-break-before: always; } /* Force page break for tokens */
       }
     `,
+    print: handlePrint,
   });
 
   if (!invoice) {
@@ -253,7 +270,7 @@ const InvoicePopup = ({
             <Button onClick={onClose} colorScheme="gray">
               Close
             </Button>
-            <Button onClick={() => handlePrint()} colorScheme="blue">
+            <Button onClick={() => handleInvoicePrint()} colorScheme="blue">
               Print
             </Button>
           </Flex>

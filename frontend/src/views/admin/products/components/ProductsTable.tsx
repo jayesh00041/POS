@@ -27,7 +27,7 @@ import {
 import { MdDelete, MdEdit } from 'react-icons/md';
 import { FaPlus } from 'react-icons/fa';
 import ProductForm from './ProductForm';
-import { SearchBar } from 'components/navbar/searchBar/SearchBar';
+import { SearchBar } from '../../../../components/navbar/searchBar/SearchBar';
 import { useMutation } from '@tanstack/react-query';
 import { getProducts, deleteProduct } from 'http-routes';
 import { enqueueSnackbar } from 'notistack';

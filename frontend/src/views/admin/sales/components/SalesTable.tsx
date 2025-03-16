@@ -20,13 +20,13 @@ import {
   PopoverArrow,
 } from '@chakra-ui/react';
 import { FaCalendar, FaEye } from 'react-icons/fa';
-import { SearchBar } from 'components/navbar/searchBar/SearchBar';
+import { SearchBar } from '../../../../components/navbar/searchBar/SearchBar';
 import { useMutation } from '@tanstack/react-query';
 import { enqueueSnackbar } from 'notistack';
 import { getSalesData } from 'http-routes';
-import MiniCalendar from 'components/calendar/MiniCalendar';
+import MiniCalendar from '../../../../components/calendar/MiniCalendar';
 import { formatDate } from 'shared';
-import InvoicePopup from 'components/invoice/InvoicePopup';
+import InvoicePopup from '../../../../components/invoice/InvoicePopup';
 
 const SalesTable = () => {
   const [invoices, setInvoices] = useState([]);

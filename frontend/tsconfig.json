@@ -22,7 +22,10 @@
     "downlevelIteration": true,
     "baseUrl": "src",
     "paths": {
-      "@assets/*": ["./src/assets/*"]
+      "@assets/*": ["./src/assets/*"],
+      "contexts/*": ["./src/contexts/*"],
+      "components/*": ["./src/components/*"],
+      "routes": ["routes.ts"]
     }
   },
   "include": ["./src"]

@@ -9,11 +9,11 @@ import {
 } from '@chakra-ui/react';
 import initialTheme from './theme/theme'; //  { themeGreen }
 import { useState } from 'react';
-import { CartProvider } from 'contexts/CartContext';
 import { SnackbarProvider } from 'notistack';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { UserProvider } from 'contexts/UserContext';
 import ProtectedRoute from 'components/protectedRoute/ProtectedRoute';
+import { CartProvider } from 'contexts/CartContext';
 // Chakra imports
 
 export default function Main() {

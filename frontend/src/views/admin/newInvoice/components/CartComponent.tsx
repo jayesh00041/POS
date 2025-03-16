@@ -19,7 +19,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import { FaShoppingCart } from 'react-icons/fa';
-import { useCart } from 'contexts/CartContext';
+import { useCart } from '../../../../contexts/CartContext';
 import { useMutation } from '@tanstack/react-query';
 import { createInvoice } from '../../../../http-routes/';
 import InvoicePopup from '../../../../components/invoice/InvoicePopup';
