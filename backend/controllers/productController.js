@@ -4,7 +4,7 @@ const createHttpError = require("http-errors");
 
 const saveOrUpdateProduct = async (req, res, next) => {
     try {
-        const { id, name, categoryId, price, counterNo, variations } = req.body;
+        const { id, name, categoryId, price, counterNo, variationType, variations } = req.body;
         let imageUrl;
 
         if (req.file) {
@@ -15,7 +15,7 @@ const saveOrUpdateProduct = async (req, res, next) => {
         // Validate category existence
         const categoryExists = await Category.findById(categoryId);
         if (!categoryExists) {
-            return next(createHttpError(400, "Invalid category ID"));
+            return next(createHttpError(400, "Invalid category"));
         }
 
         let parsedVariations = typeof variations === "string" ? JSON.parse(variations) : variations;
@@ -33,7 +33,7 @@ const saveOrUpdateProduct = async (req, res, next) => {
         if (id) {
             product = await Product.findByIdAndUpdate(
                 id,
-                { name, imageUrl, categoryId, price: finalPrice, counterNo, variations: parsedVariations },
+                { name, imageUrl, categoryId, price: finalPrice, counterNo, variationType, variations: parsedVariations },
                 { new: true }
             );
         } else {
@@ -43,6 +43,7 @@ const saveOrUpdateProduct = async (req, res, next) => {
                 categoryId, 
                 price: finalPrice, 
                 counterNo, 
+                variationType,
                 variations: parsedVariations 
             });
         }
@@ -82,6 +83,7 @@ const getCategoryWiseItems = async (req, res, next) => {
                 name: product.name,
                 price: product.price,
                 counterNo: product.counterNo,
+                variationType: product.variationType,
                 variations: product.variations,
                 imageUrl: absoluteImageUrl, // Return absolute path
             });

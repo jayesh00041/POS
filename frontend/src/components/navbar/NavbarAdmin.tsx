@@ -1,8 +1,8 @@
 /* eslint-disable */
 // Chakra Imports
-import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Flex, Link, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box, Flex, Link, Text, useColorModeValue } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
-import AdminNavbarLinks from 'components/navbar/NavbarLinksAdmin';
+import AdminNavbarLinks from '../../components/navbar/NavbarLinksAdmin';
 
 export default function AdminNavbar(props: {
 	secondary: boolean;
@@ -26,7 +26,7 @@ export default function AdminNavbar(props: {
 
 	// Here are all the props that may change depending on navbar's type or state.(secondary, variant, scrolled)
 	let mainText = useColorModeValue('navy.700', 'white');
-	let secondaryText = useColorModeValue('gray.700', 'white');
+	// let secondaryText = useColorModeValue('gray.700', 'white');
 	let navbarPosition = 'fixed' as const;
 	let navbarFilter = 'none';
 	let navbarBackdrop = 'blur(20px)';
@@ -95,7 +95,7 @@ export default function AdminNavbar(props: {
 				alignItems={{ xl: 'center' }}
 				mb={gap}>
 				<Box mb={{ sm: '8px', md: '0px' }}>
-					<Breadcrumb>
+					{/* <Breadcrumb>
 						<BreadcrumbItem color={secondaryText} fontSize='sm' mb='5px'>
 							<BreadcrumbLink href='#' color={secondaryText}>
 								Pages
@@ -107,7 +107,7 @@ export default function AdminNavbar(props: {
 								{brandText}
 							</BreadcrumbLink>
 						</BreadcrumbItem>
-					</Breadcrumb>
+					</Breadcrumb> */}
 					{/* Here we create navbar brand, based on route name */}
 					<Link
 						color={mainText}

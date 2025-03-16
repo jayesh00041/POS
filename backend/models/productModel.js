@@ -11,6 +11,7 @@ const productSchema = new mongoose.Schema({
     categoryId: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
     price: { type: String, required: true },
     counterNo: { type: Number, required: true },
+    variationType: { type: String, default: "Variation" },
     variations: [variationSchema]
 }, { timestamps: true });
 

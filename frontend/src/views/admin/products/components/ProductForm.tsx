@@ -29,6 +29,7 @@ const ProductForm = ({ isOpen, onClose, product, setProducts }) => {
   const [price, setPrice] = useState("");
   const [counterNo, setCounterNo] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [variationType, setVariationType] = useState("");
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [variations, setVariations] = useState([]);
@@ -61,6 +62,7 @@ const ProductForm = ({ isOpen, onClose, product, setProducts }) => {
     setCounterNo(product?.counterNo || "");
     setImageUrl(product?.imageUrl || "");
     setSelectedCategory(product?.categoryId || "");
+    setVariationType(product?.variationType || "");
     setVariations(product?.variations || []);
   }, [product]);
 
@@ -80,7 +82,7 @@ const ProductForm = ({ isOpen, onClose, product, setProducts }) => {
   };
 
   const addVariation = () => {
-    setVariations([...variations, { name: "", price: price || 0 }]); // Default price set to main product price
+    setVariations([...variations, { name: "", price: price || undefined }]); // Default price set to main product price
   };
 
   const removeVariation = (index) => {
@@ -102,6 +104,7 @@ const ProductForm = ({ isOpen, onClose, product, setProducts }) => {
     formData.append("price", price);
     formData.append("counterNo", counterNo);
     formData.append("categoryId", selectedCategory._id);
+    formData.append("variationType", variationType);
     formData.append("variations", JSON.stringify(variations));
 
     if (imageFile) {
@@ -140,7 +143,7 @@ const ProductForm = ({ isOpen, onClose, product, setProducts }) => {
           <VStack spacing={4} align="stretch">
             <Box display="flex" alignItems="center">
               <Avatar size="lg" src={imageUrl} name={name} mr={3} />
-              <Input type="file" accept="image/*" onChange={handleImageChange} />
+              <Input type="file" accept="image/*" onChange={handleImageChange} padding="5px 10px" />
             </Box>
             <FormControl isRequired>
               <FormLabel>Product Name</FormLabel>
@@ -163,6 +166,11 @@ const ProductForm = ({ isOpen, onClose, product, setProducts }) => {
             <FormControl isRequired>
               <FormLabel>Counter No.</FormLabel>
               <Input type="number" value={counterNo} onChange={(e) => setCounterNo(e.target.value)} />
+            </FormControl>
+
+            <FormControl>
+              <FormLabel>Variation Type</FormLabel>
+              <Input value={variationType} onChange={(e) => setVariationType(e.target.value)} />
             </FormControl>
 
             {/* Variations Section */}

@@ -11,9 +11,9 @@ import initialTheme from './theme/theme'; //  { themeGreen }
 import { useState } from 'react';
 import { SnackbarProvider } from 'notistack';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { UserProvider } from 'contexts/UserContext';
-import ProtectedRoute from 'components/protectedRoute/ProtectedRoute';
-import { CartProvider } from 'contexts/CartContext';
+import { UserProvider } from './contexts/UserContext';
+import ProtectedRoute from './components/protectedRoute/ProtectedRoute';
+import { CartProvider } from './contexts/CartContext';
 // Chakra imports
 
 export default function Main() {

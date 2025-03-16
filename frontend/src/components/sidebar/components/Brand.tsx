@@ -2,8 +2,8 @@
 import { Flex } from '@chakra-ui/react';
 
 // Custom components
-// import { HorizonLogo } from 'components/icons/Icons';
-import { HSeparator } from 'components/separator/Separator';
+// import { HorizonLogo } from '../../../../components/icons/Icons';
+import { HSeparator } from '../../../components/separator/Separator';
 import logo from 'assets/img/logo/juicy-jalsa-logo.png'
 
 export function SidebarBrand() {

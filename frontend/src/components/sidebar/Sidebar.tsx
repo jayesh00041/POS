@@ -13,12 +13,12 @@ import {
   DrawerContent,
   DrawerCloseButton,
 } from '@chakra-ui/react';
-import Content from 'components/sidebar/components/Content';
+import Content from '../../components/sidebar/components/Content';
 import {
   renderThumb,
   renderTrack,
   renderView,
-} from 'components/scrollbar/Scrollbar';
+} from '../../components/scrollbar/Scrollbar';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 
 // Assets
@@ -130,7 +130,7 @@ export function SidebarResponsive(props: { routes: RoutesType[] }) {
               renderThumbVertical={renderThumb}
               renderView={renderView}
             >
-              <Content routes={routes} />
+              <Content routes={routes} onLinkClick={onClose} />
             </Scrollbars>
           </DrawerBody>
         </DrawerContent>

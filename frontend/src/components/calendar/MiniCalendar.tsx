@@ -6,7 +6,7 @@ import { Text, Icon, Button } from '@chakra-ui/react';
 // Chakra imports
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 // Custom components
-import Card from 'components/card/Card';
+import Card from '../../components/card/Card';
 
 type CalendarValue = Date | [Date, Date] | null;
 

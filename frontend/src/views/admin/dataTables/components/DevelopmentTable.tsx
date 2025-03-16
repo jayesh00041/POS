@@ -8,9 +8,9 @@ import {
 	useReactTable
 } from '@tanstack/react-table';
 // Custom components
-import Card from 'components/card/Card';
-import Menu from 'components/menu/MainMenu';
-import { AndroidLogo, AppleLogo, WindowsLogo } from 'components/icons/Icons';
+import Card from '../../../../components/card/Card';
+import Menu from '../../../../components/menu/MainMenu';
+import { AndroidLogo, AppleLogo, WindowsLogo } from '../../../../components/icons/Icons';
 import * as React from 'react';
 // Assets
 

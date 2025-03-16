@@ -40,15 +40,16 @@ export default function ItemComponent({ product }) {
 
         <Box flex="1">
           <Text fontWeight="bold" color={textColor}>{product.name}</Text>
-          <Text fontSize="sm" color={textColorSecondary}>₹{product.price}</Text>
+          <Text fontSize="sm" color={textColorSecondary}>{(product.price.includes("₹") ? "" : "₹")}{product.price}</Text>
         </Box>
 
         {product.variations?.length > 0 ? (
           <Menu closeOnSelect={false}>
-            <MenuButton as={Button} rightIcon={<ChevronDownIcon />} size="sm">
-              Variations
-            </MenuButton>
-            <MenuList>
+          <MenuButton as={Button} rightIcon={<ChevronDownIcon />} size="sm">
+            {product.variationType}
+          </MenuButton>
+          <MenuList maxH="400px" overflowY="auto">
+            <Box sx={{ columnCount: { base: 1, md: 2, lg: 2 }, columnGap: "16px" }}>
               {product.variations.map((variation) => {
                 const key = getVariationKey(product.id, variation._id);
                 return (
@@ -75,8 +76,10 @@ export default function ItemComponent({ product }) {
                   </MenuItem>
                 );
               })}
-            </MenuList>
-          </Menu>
+            </Box>
+          </MenuList>
+        </Menu>
+        
         ) : (
           <Flex align="center">
             <IconButton

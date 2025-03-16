@@ -1,7 +1,7 @@
 // Chakra imports
 import { Flex, Box, Icon, Text, Spacer } from '@chakra-ui/react';
 // Custom components
-import Card from 'components/card/Card';
+import Card from '../../components/card/Card';
 
 // Assets
 import bgMastercard from 'assets/img/dashboards/Debit.png';

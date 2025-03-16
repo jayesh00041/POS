@@ -15,17 +15,17 @@ import {
   useColorMode,
 } from '@chakra-ui/react';
 // Custom Components
-// import { ItemContent } from 'components/menu/ItemContent';
-// import { SearchBar } from 'components/navbar/searchBar/SearchBar';
-import { SidebarResponsive } from 'components/sidebar/Sidebar';
+// import { ItemContent } from '../../../../components/menu/ItemContent';
+// import { SearchBar } from '../../../../components/navbar/searchBar/SearchBar';
+import { SidebarResponsive } from '../../components/sidebar/Sidebar';
 import PropTypes from 'prop-types';
 import React from 'react';
 // Assets
 // import navImage from 'assets/img/layout/Navbar.png';
 // import { MdNotificationsNone, MdInfoOutline } from 'react-icons/md';
 import { IoMdMoon, IoMdSunny } from 'react-icons/io';
-import routes from 'routes';
-import { useUser } from 'contexts/UserContext';
+import routes from '../../routes';
+import { useUser } from '../../contexts/UserContext';
 import { useMutation } from '@tanstack/react-query';
 import { logout } from 'http-routes';
 import { useNavigate } from 'react-router-dom';
