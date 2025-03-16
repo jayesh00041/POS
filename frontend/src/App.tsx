@@ -14,6 +14,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { UserProvider } from './contexts/UserContext';
 import ProtectedRoute from './components/protectedRoute/ProtectedRoute';
 import { CartProvider } from './contexts/CartContext';
+import { CookiesProvider } from 'react-cookie';
 // Chakra imports
 
 export default function Main() {
@@ -33,25 +34,27 @@ export default function Main() {
         <SnackbarProvider autoHideDuration={3000}>
           <QueryClientProvider client={queryClient}>
             <CartProvider>
-              <Routes>
-                <Route path="auth/*" element={<AuthLayout />} />
+              <CookiesProvider>
+                <Routes>
+                  <Route path="auth/*" element={<AuthLayout />} />
 
-                <Route
-                  path="admin/*"
-                  element={
-                    <ProtectedRoute>
-                      <AdminLayout
-                        theme={currentTheme}
-                        setTheme={setCurrentTheme}
-                      />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/"
-                  element={<Navigate to="/auth/sign-in" replace />}
-                />
-              </Routes>
+                  <Route
+                    path="admin/*"
+                    element={
+                      <ProtectedRoute>
+                        <AdminLayout
+                          theme={currentTheme}
+                          setTheme={setCurrentTheme}
+                        />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/"
+                    element={<Navigate to="/auth/sign-in" replace />}
+                  />
+                </Routes>
+              </CookiesProvider>
             </CartProvider>
           </QueryClientProvider>
         </SnackbarProvider>

@@ -48,7 +48,7 @@ export default function NewInvoiceComponent() {
           <Spinner size="xl" />
         </Flex>
       ) : (
-        <Tabs variant="enclosed" colorScheme="blue">
+        <Tabs variant="enclosed" colorScheme="blue" >
           <TabList>
             {categories.map((cat) => (
               <Tab key={cat.name}>{cat.name}</Tab>
