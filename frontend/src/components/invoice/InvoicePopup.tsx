@@ -42,10 +42,13 @@ const InvoicePopup = ({
       //console.log(data);
       const blob = new Blob([data], {type: "text/html"});
       const url = URL.createObjectURL(blob);
-
-      (window as any).electronAPI.printComponent(url, (response) => {
-        console.log("Main: ", response);
-      });
+      if((window as any)?.electronAPI)
+        (window as any).electronAPI.printComponent(url, (response) => {
+          console.log("Main: ", response);
+        });
+      else if((window as any).ReactNativeWebView)
+          (window as any).ReactNativeWebView.postMessage("print-command", data);
+       
       //console.log('Main: ', data);
     });
   };

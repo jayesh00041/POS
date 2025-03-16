@@ -4,9 +4,8 @@ import { useCookies } from "react-cookie";
 
 const ProtectedRoute = ({ children }: { children?: React.ReactNode }): JSX.Element => {
   const user = localStorage.getItem("user");
-  const [cookies, setCookie] = useCookies(['accessToken']);
+  const [cookies] = useCookies(['accessToken']);
   console.log(cookies);
-  
   
   const location = useLocation();
 
