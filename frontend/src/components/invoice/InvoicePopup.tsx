@@ -47,7 +47,7 @@ const InvoicePopup = ({
           console.log("Main: ", response);
         });
       else if((window as any).ReactNativeWebView)
-          (window as any).ReactNativeWebView.postMessage("print-command", data);
+          (window as any).ReactNativeWebView.postMessage("print-command");
        
       //console.log('Main: ', data);
     });

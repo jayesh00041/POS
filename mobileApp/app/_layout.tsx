@@ -20,7 +20,20 @@ const WebViewScreen = () => {
       <WebView 
         source={{ uri: "http://jayesh00041.github.io/POS/" }}
         style={styles.webview}
-        onMessage={handleMessage}
+        onMessage={(event) => {
+                      try {
+                        const receivedData = JSON.parse(event.nativeEvent.data);
+                        console.log("Received from WebView:", receivedData);
+
+                        if (receivedData.type === "print-command") {
+                          console.log("Message:", receivedData.payload.message);
+                          console.log("Timestamp:", receivedData.payload.timestamp);
+                        }
+                      } catch (error) {
+                        console.error("Error parsing message from WebView:", error);
+                      }
+                    }
+                }
       />
     </View>
   );
