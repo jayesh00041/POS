@@ -39,7 +39,7 @@ const registerUser = async (req, res, next) => {
             return next(createHttpError(400, "All fields are required"));
         }
 
-        const isUserAlreadyExist = await User.findOne({ email }) || await User.findOne({ phone });
+        const isUserAlreadyExist = (await User.findOne({ email }) || await User.findOne({ phone }));
         if (isUserAlreadyExist) {
             return next(createHttpError(400, "User already exists"));
         }
@@ -80,29 +80,24 @@ const registerUser = async (req, res, next) => {
 };
 
 const generatePassword = () => {
-    return "JalsoKaro123"
-  };
+    // const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$!";
+    // return Array.from({ length: 10 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+    return "JalsaKaro"
+};
 
 const loginUser = async (req, res, next) => {
     try {
         const { emailOrPhone, password } = req.body;
         if(!emailOrPhone || !password){
-            return next(createHttpError(400, "Both login credential and password are required"));
+            return next(createHttpError(400, "All fields are required"));
         }
 
-        // Check if the input is an email or phone number
-        let user;
-        // Simple regex to check if input looks like an email
-        const isEmail = /\S+@\S+\.\S+/.test(emailOrPhone);
-        
-        if (isEmail) {
-            user = await User.findOne({ email: emailOrPhone.toLowerCase() });
-        } else {
-            user = await User.findOne({ phone: emailOrPhone });
-        }
-
+        let user = await User.findOne({ email: emailOrPhone });
         if(!user){
-            return next(createHttpError(400, "User not found"));
+            user = await User.findOne({ phone: emailOrPhone });
+            if(!user){
+                return next(createHttpError(400, "User not found"));
+            }
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -128,6 +123,7 @@ const loginUser = async (req, res, next) => {
         return next(err);
     }
 }
+
 const getUserData = async (req, res, next) => {
     try {
         console.log("req.user", req.user);
