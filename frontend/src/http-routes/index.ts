@@ -11,9 +11,12 @@ const api = axios.create({
   }
 });
 
-export const login = (data: {email: string, password: string}) => api.post("/user/login", data);
+export const login = (data: {emailOrPhone: string, password: string}) => api.post("/user/login", data);
 export const logout = () => api.post("/user/logout");
 export const getUserData = () => api.get("/user/");
+export const getUsers = () => api.get("/user/allUsers");
+export const blockUnblockUser = (id) => api.put(`/user/blockUnblock/${id}`);
+export const addOrUpdateUser = (data) => api.post("/user/register", data);
 
 // category Apis
 export const getCategories = () => api.get("/category/");

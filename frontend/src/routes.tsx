@@ -7,6 +7,7 @@ import {
   // MdOutlineShoppingCart,
   MdFoodBank,
   MdGridView,
+  MdVerifiedUser,
 } from 'react-icons/md';
 
 // Admin Imports
@@ -15,6 +16,7 @@ import NewInvoice from 'views/admin/newInvoice';
 import Sales from 'views/admin/sales';
 import Products from 'views/admin/products';
 import Categories from 'views/admin/categories';
+import Users from 'views/admin/users';
 import MainDashboard from 'views/admin/default';
 // import NFTMarketplace from 'views/admin/marketplace';
 // import Profile from 'views/admin/profile';
@@ -59,6 +61,13 @@ const routes = [
     path: "/category",
     icon: <Icon as={MdGridView as React.ElementType} width="20px" height="20px" color="inherit" />,
     component: <Categories />,
+  },
+  {
+    name: "Users",
+    layout: "/admin",
+    path: "/users",
+    icon: <Icon as={MdVerifiedUser as React.ElementType} width="20px" height="20px" color="inherit" />,
+    component: <Users />,
   },
   {
     name: 'Main Dashboard',

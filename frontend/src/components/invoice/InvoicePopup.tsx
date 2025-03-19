@@ -46,8 +46,13 @@ const InvoicePopup = ({
         (window as any).electronAPI.printComponent(url, (response) => {
           console.log("Main: ", response);
         });
-      else if((window as any).ReactNativeWebView)
-          (window as any).ReactNativeWebView.postMessage("print-command");
+      else if((window as any).ReactNativeWebView){
+        const dataToPrint = {
+          data: url,
+          message: 'print-component',
+        };
+        (window as any).ReactNativeWebView.postMessage(JSON.stringify(dataToPrint));
+      }
        
       //console.log('Main: ', data);
     });

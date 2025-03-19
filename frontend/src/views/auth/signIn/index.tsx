@@ -21,8 +21,7 @@ import { enqueueSnackbar } from 'notistack';
 import { useUser } from '../../../contexts/index';
 
 function SignIn() {
-  console.log('hi...................');
-  const [email, setEmail] = useState('');
+  const [emailOrPhone, setEmailOrPhone] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
@@ -31,7 +30,7 @@ function SignIn() {
   const navigate = useNavigate();
 
   const handleSignIn = async () => {
-    loginMutation.mutate({ email, password });
+    loginMutation.mutate({ emailOrPhone, password });
   };
 
   useEffect(() => {
@@ -41,7 +40,7 @@ function SignIn() {
   }, [user, navigate]);
 
   const loginMutation = useMutation({
-    mutationFn: (reqData: { email: string; password: string }) =>
+    mutationFn: (reqData: { emailOrPhone: string; password: string }) =>
       login(reqData),
     onSuccess: (response) => {
       loginUser(response.data.data);
@@ -77,12 +76,12 @@ function SignIn() {
           </Heading>
         </Box>
         <FormControl>
-          <FormLabel>Email</FormLabel>
+          <FormLabel>Email/Phone</FormLabel>
           <Input
             type="email"
-            placeholder="mail@gmail.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            placeholder="9876543210"
+            value={emailOrPhone}
+            onChange={(e) => setEmailOrPhone(e.target.value)}
           />
           <FormLabel>Password</FormLabel>
           <InputGroup>
