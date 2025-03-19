@@ -12,8 +12,6 @@ import {
   FormLabel,
   Input,
   VStack,
-  Avatar,
-  Box,
   Select,
 } from "@chakra-ui/react";
 import { useMutation } from "@tanstack/react-query";
