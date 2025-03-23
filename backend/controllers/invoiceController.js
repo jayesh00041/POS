@@ -151,6 +151,15 @@ const getSalesTableData = async (req, res, next) => {
             };
         }
 
+        // Add user filter based on role
+        const userId = req.user._id;
+        const isAdmin = req.user.role === 'admin'; // Assuming role is stored in user object
+        
+        // If not admin, only show user's own invoices
+        if (!isAdmin) {
+            dateFilter.createdBy = userId;
+        }
+
         // Get all filtered results
         const invoices = await Invoice.find(dateFilter)
             .populate('createdBy', 'name')

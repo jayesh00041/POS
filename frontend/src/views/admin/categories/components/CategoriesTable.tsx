@@ -31,6 +31,7 @@ import { SearchBar } from '../../../../components/navbar/searchBar/SearchBar';
 import { useMutation } from '@tanstack/react-query';
 import { getCategories, deleteCategory } from 'http-routes';
 import { enqueueSnackbar } from 'notistack';
+import { usePrivilege, Privilege } from '../../../../contexts/PrivilegeContext';
 
 const CategoriesTable = () => {
   const [categories, setCategories] = useState([]);
@@ -44,6 +45,8 @@ const CategoriesTable = () => {
     onOpen: onDeleteOpen,
     onClose: onDeleteClose,
   } = useDisclosure();
+
+  const { isUserAuthorised } = usePrivilege();
 
   const getCategoriesMutation = useMutation({
     mutationFn: () => getCategories(),
@@ -139,7 +142,7 @@ const CategoriesTable = () => {
                 <Th>Name</Th>
                 <Th>Counter No.</Th>
                 <Th>Total Products</Th>
-                <Th>Actions</Th>
+                {isUserAuthorised(Privilege.PRODUCTS_WRITE,<Th>Actions</Th>)}
               </Tr>
             </Thead>
             <Tbody>
@@ -155,7 +158,8 @@ const CategoriesTable = () => {
                   <Td>{category.name}</Td>
                   <Td>{category.counterNo}</Td>
                   <Td>{category.totalProducts}</Td>
-                  <Td>
+                  {isUserAuthorised(Privilege.PRODUCTS_WRITE,
+                    <Td>
                     <Button
                       colorScheme="blue"
                       size="sm"
@@ -172,6 +176,9 @@ const CategoriesTable = () => {
                       <Icon as={MdDelete as React.ElementType} width="15px" height="15px" />
                     </Button>
                   </Td>
+                  )}
+                  
+                  
                 </Tr>
               ))}
             </Tbody>

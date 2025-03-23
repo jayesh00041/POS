@@ -21,10 +21,12 @@ export default function Dashboard(props: { [x: string]: any }) {
   };
   const getActiveRoute = (routes: RoutesType[]): string => {
     let activeRoute = 'Dashboard';
+    const currentPath = window.location.pathname;
+    
     for (let i = 0; i < routes.length; i++) {
-      if (
-        window.location.href.indexOf(routes[i].layout + routes[i].path) !== -1
-      ) {
+      const routePath = routes[i].layout + routes[i].path;
+      // Check for exact path match instead of substring
+      if (currentPath === routePath || currentPath.startsWith(routePath + '/')) {
         return routes[i].name;
       }
     }
@@ -81,8 +83,8 @@ export default function Dashboard(props: { [x: string]: any }) {
           overflow="auto"
           position="relative"
           maxHeight="100%"
-          w={{ base: '100%', xl: 'calc( 100% - 290px )' }}
-          maxWidth={{ base: '100%', xl: 'calc( 100% - 290px )' }}
+          w={{ base: '100%', xl: 'calc( 100% - 90px )' }}
+          maxWidth={{ base: '100%', xl: 'calc( 100% - 90px )' }}
           transition="all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1)"
           transitionDuration=".2s, .2s, .35s"
           transitionProperty="top, bottom, width"
@@ -92,7 +94,7 @@ export default function Dashboard(props: { [x: string]: any }) {
             <Box>
               <Navbar
                 onOpen={onOpen}
-                logoText={'Horizon UI Dashboard PRO'}
+                logoText={'Jalso Park'}
                 brandText={getActiveRoute(routes)}
                 secondary={getActiveNavbar(routes)}
                 message={getActiveNavbarText(routes)}

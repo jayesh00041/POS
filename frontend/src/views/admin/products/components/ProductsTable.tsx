@@ -31,6 +31,8 @@ import { SearchBar } from '../../../../components/navbar/searchBar/SearchBar';
 import { useMutation } from '@tanstack/react-query';
 import { getProducts, deleteProduct } from 'http-routes';
 import { enqueueSnackbar } from 'notistack';
+import { usePrivilege } from '../../../../contexts/PrivilegeContext';
+import { Privilege } from '../../../../contexts/PrivilegeContext';
 
 const ProductsTable = () => {
   const [products, setProducts] = useState([]);
@@ -43,6 +45,8 @@ const ProductsTable = () => {
     onOpen: onDeleteOpen,
     onClose: onDeleteClose,
   } = useDisclosure();
+
+  const { isUserAuthorised } = usePrivilege();
 
   const getProductsMutation = useMutation({
     mutationFn: () => getProducts(),
@@ -139,7 +143,7 @@ const ProductsTable = () => {
                 <Th>Category</Th>
                 <Th>Price</Th>
                 <Th>Variations</Th>
-                <Th>Actions</Th>
+                {isUserAuthorised(Privilege.PRODUCTS_WRITE,<Th>Actions</Th>)}
               </Tr>
             </Thead>
             <Tbody>
@@ -180,23 +184,25 @@ const ProductsTable = () => {
                       '-'
                     )}
                   </Td>
-                  <Td>
-                    <Button
-                      colorScheme="blue"
-                      size="sm"
-                      onClick={() => handleEdit(product)}
-                    >
-                      <Icon as={MdEdit as React.ElementType} width="15px" height="15px" />
-                    </Button>
-                    <Button
-                      colorScheme="red"
-                      size="sm"
-                      ml={2}
-                      onClick={() => handleDelete(product._id)}
-                    >
-                      <Icon as={MdDelete as React.ElementType} width="15px" height="15px" />
-                    </Button>
-                  </Td>
+                  {isUserAuthorised(Privilege.PRODUCTS_WRITE,
+                    <Td>
+                      <Button
+                        colorScheme="blue"
+                        size="sm"
+                        onClick={() => handleEdit(product)}
+                      >
+                        <Icon as={MdEdit as React.ElementType} width="15px" height="15px" />
+                      </Button>
+                      <Button
+                        colorScheme="red"
+                        size="sm"
+                        ml={2}
+                        onClick={() => handleDelete(product._id)}
+                      >
+                        <Icon as={MdDelete as React.ElementType} width="15px" height="15px" />
+                      </Button>
+                    </Td>
+                  )}
                 </Tr>
               ))}
             </Tbody>

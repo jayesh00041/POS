@@ -49,6 +49,7 @@ app.use("/api/user", require("./routes/userRoute"));
 app.use("/api/category", require("./routes/categoryRoute"));
 app.use("/api/product", require("./routes/productRoute"));
 app.use("/api/invoice", require("./routes/invoiceRoute"));
+app.use("/api/dashboard", require("./routes/dashboardRoute"));
 
 // Global error handling middleware
 app.use(globalErrorHanddler);

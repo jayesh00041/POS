@@ -22,12 +22,12 @@
 
 // Chakra imports
 import { Box } from '@chakra-ui/react';
+import Dashboard from './components/Dashboard';
 
 export default function Overview() {
 	return (
-		<Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
-			{/* Main Fields */}
-
+		<Box pt={{ base: '55px', md: '80px', xl: '80px' }}>
+			<Dashboard/>
 		</Box>
 	);
 }

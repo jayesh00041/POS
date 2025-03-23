@@ -1,6 +1,7 @@
 // Chakra Imports
 import {
   Avatar,
+  Box,
   // Button,
   Flex,
   Icon,
@@ -18,6 +19,7 @@ import {
 // import { ItemContent } from '../../../../components/menu/ItemContent';
 // import { SearchBar } from '../../../../components/navbar/searchBar/SearchBar';
 import { SidebarResponsive } from '../../components/sidebar/Sidebar';
+import logo from '../../assets/img/logo/jalso-park-logo.png';
 import PropTypes from 'prop-types';
 import React from 'react';
 // Assets
@@ -28,16 +30,25 @@ import routes from '../../routes';
 import { useUser } from '../../contexts/UserContext';
 import { useMutation } from '@tanstack/react-query';
 import { logout } from 'http-routes';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { enqueueSnackbar } from 'notistack';
 export default function HeaderLinks(props: { secondary: boolean }) {
   const { secondary } = props;
   const { colorMode, toggleColorMode } = useColorMode();
+
+  let location = useLocation();
+
+  const activeRoute = (routeName: string) => {
+    return location.pathname.includes(routeName);
+  };
+
+  const pageName = routes.find((route) => activeRoute(route.path)).name;
+
   // Chakra Color Mode
   const navbarIcon = useColorModeValue('gray.400', 'white');
   let menuBg = useColorModeValue(
-    'rgba(255, 255, 255, 0.5)',
-    'rgba(0, 0, 0, 0.5)',
+    'rgba(255, 255, 255, 0.9)',
+    'rgba(0, 0, 0, 0.9)',
   );
   const textColor = useColorModeValue('secondaryGray.900', 'white');
   // const textColorBrand = useColorModeValue('brand.700', 'brand.400');
@@ -73,8 +84,9 @@ export default function HeaderLinks(props: { secondary: boolean }) {
     <Flex
       alignItems="center"
       flexDirection="row"
+      justifyContent="space-between"
       flexWrap={secondary ? { base: 'wrap', md: 'nowrap' } : 'unset'}
-      w={{ sm: '100%', md: 'auto' }}
+      w={{ sm: '100%', md: 'calc(100vw - 165px)' }}
     >
       {/* <SearchBar
 				mb={() => {
@@ -86,7 +98,53 @@ export default function HeaderLinks(props: { secondary: boolean }) {
 				me='10px'
 				borderRadius='30px'
 			/> */}
-        <SidebarResponsive routes={routes} />
+      <SidebarResponsive routes={routes} />
+      <Text
+        fontSize="x-large"
+        mr="auto"
+        display={{ sm: 'none', md: 'contents' }}
+        fontWeight="700"
+        color={textColor}
+      >
+        {pageName}
+      </Text>
+      <Box mb={{ sm: '8px', md: '0px' }} display={{ xl: 'none' }}>
+        {/* <Breadcrumb>
+            <BreadcrumbItem color={secondaryText} fontSize='sm' mb='5px'>
+              <BreadcrumbLink href='#' color={secondaryText}>
+                Pages
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+
+            <BreadcrumbItem color={secondaryText} fontSize='sm'>
+              <BreadcrumbLink href='#' color={secondaryText}>
+                {brandText}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+          </Breadcrumb> */}
+        {/* Here we create navbar brand, based on route name */}
+        {/* <Link
+            color={mainText}
+            href='#'
+            bg='inherit'
+            borderRadius='inherit'
+            fontWeight='bold'
+            fontSize='34px'
+            _hover={{ color: { mainText } }}
+            _active={{
+              bg: 'inherit',
+              transform: 'none',
+              borderColor: 'transparent'
+            }}
+            _focus={{
+              boxShadow: 'none'
+            }}>
+            {brandText}
+          </Link> */}
+        <img src={logo} alt="logo" height="80px" width="80px" />
+        {/* <Text>Jalso Park</Text> */}
+      </Box>
+
       {/* <Menu>
 				<MenuButton p='0px'>
 					<Icon mt='6px' as={MdNotificationsNone} color={navbarIcon} w='18px' h='18px' me='10px' />
@@ -128,7 +186,6 @@ export default function HeaderLinks(props: { secondary: boolean }) {
           width="60px"
           bg={menuBg}
           boxShadow={shadow}
-          ml="auto"
         >
           <Avatar
             _hover={{ cursor: 'pointer' }}
@@ -147,7 +204,8 @@ export default function HeaderLinks(props: { secondary: boolean }) {
           borderRadius="20px"
           bg={menuBg}
           border="none"
-		  position="relative" zIndex="10"
+          position="relative"
+          zIndex="10"
         >
           <Flex w="100%" mb="0px">
             <Text

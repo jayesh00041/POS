@@ -29,7 +29,7 @@ async function createWindow() {
   // load the index.html of the app
   let indexPath;
   if (dev && process.argv.indexOf("--noDevServer") === -1) {
-    indexPath = new URL("http://localhost:3000/POS/");
+    indexPath = new URL("http://jayesh00041.github.io/POS/");
   } else {
     indexPath = new URL(path.join(__dirname, "dist", "index.html"), "file:");
   }

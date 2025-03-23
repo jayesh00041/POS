@@ -15,6 +15,7 @@ import { UserProvider } from './contexts/UserContext';
 import ProtectedRoute from './components/protectedRoute/ProtectedRoute';
 import { CartProvider } from './contexts/CartContext';
 import { CookiesProvider } from 'react-cookie';
+import { PrivilegeProvider } from './contexts/PrivilegeContext';
 // Chakra imports
 
 export default function Main() {
@@ -41,12 +42,14 @@ export default function Main() {
                   <Route
                     path="admin/*"
                     element={
-                      <ProtectedRoute>
-                        <AdminLayout
-                          theme={currentTheme}
-                          setTheme={setCurrentTheme}
-                        />
-                      </ProtectedRoute>
+                      <PrivilegeProvider>
+                        <ProtectedRoute>
+                          <AdminLayout
+                            theme={currentTheme}
+                            setTheme={setCurrentTheme}
+                          />
+                        </ProtectedRoute>
+                      </PrivilegeProvider>
                     }
                   />
                   <Route

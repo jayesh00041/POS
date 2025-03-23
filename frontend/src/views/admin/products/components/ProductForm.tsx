@@ -16,6 +16,7 @@ import {
   Avatar,
   Box,
   Icon,
+  useToast,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { MdDelete } from "react-icons/md";
@@ -34,27 +35,34 @@ const ProductForm = ({ isOpen, onClose, product, setProducts }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [variations, setVariations] = useState([]);
   const [imageFile, setImageFile] = useState(null);
+  const [lastEnteredPrice, setLastEnteredPrice] = useState(""); // Track last entered price
+
+  const toast = useToast();
 
   const getCategoriesMutation = useMutation({
     mutationFn: () => getCategories(),
     onSuccess: (data: any) => {
-      const resCategories = data.data.data
+      const resCategories = data.data.data;
       setCategories(resCategories);
-      setSelectedCategory(product ? resCategories.find((cat) => cat._id === product.categoryId) : null);
-      if(!product){
-        setCounterNo(selectedCategory?.counterNo || "");
+      const category = product
+        ? resCategories.find((cat) => cat._id === product.categoryId)
+        : resCategories.length > 0
+        ? resCategories[0]
+        : null;
+      setSelectedCategory(category);
+      if (category) {
+        setCounterNo(category?.counterNo);
       }
     },
-    onError(error) {
-      enqueueSnackbar('Error fetching categories:', { variant: 'error' });
+    onError: (error) => {
+      enqueueSnackbar("Error fetching categories:", { variant: "error" });
     },
   });
 
   useEffect(() => {
-      getCategoriesMutation.mutate();
+    getCategoriesMutation.mutate();
     // eslint-disable-next-line
-    }, []);
-  
+  }, []);
 
   useEffect(() => {
     setName(product?.name || "");
@@ -64,11 +72,12 @@ const ProductForm = ({ isOpen, onClose, product, setProducts }) => {
     setSelectedCategory(product?.categoryId || "");
     setVariationType(product?.variationType || "");
     setVariations(product?.variations || []);
+    setLastEnteredPrice(product?.price || ""); // Set last entered price
   }, [product]);
 
   const handleCategoryChange = (event) => {
-    const selectedCategryId = event.target.value;
-    const category = categories.find((cat) => cat._id === selectedCategryId);
+    const selectedCategoryId = event.target.value;
+    const category = categories.find((cat) => cat._id === selectedCategoryId);
     setSelectedCategory(category);
     const associatedCounter = category.counterNo || "";
     setCounterNo(associatedCounter);
@@ -82,7 +91,7 @@ const ProductForm = ({ isOpen, onClose, product, setProducts }) => {
   };
 
   const addVariation = () => {
-    setVariations([...variations, { name: "", price: price || undefined }]); // Default price set to main product price
+    setVariations([...variations, { name: "", price: lastEnteredPrice || price || "" }]); // Default price set to last entered price
   };
 
   const removeVariation = (index) => {
@@ -98,6 +107,17 @@ const ProductForm = ({ isOpen, onClose, product, setProducts }) => {
   };
 
   const handleSubmit = () => {
+    if (!name || !price || !selectedCategory || !counterNo) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill all required fields.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
     const formData = new FormData();
     if (product?._id) formData.append("id", product._id);
     formData.append("name", name);
@@ -132,30 +152,57 @@ const ProductForm = ({ isOpen, onClose, product, setProducts }) => {
     },
   });
 
+  // Check if all required fields are filled
+  const isFormValid = 
+    name && 
+    selectedCategory && 
+    counterNo && 
+    ((variations?.length > 0) ? variations.every((variation) => variation.name && variation.price) : price);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} size="sm">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{product ? "Edit Product" : "Add Product"}</ModalHeader>
-        <ModalCloseButton />
+        <ModalHeader fontSize="md">{product ? "Edit Product" : "Add Product"}</ModalHeader>
+        <ModalCloseButton size="sm" />
         <ModalBody>
-          <VStack spacing={4} align="stretch">
+          <VStack spacing={3} align="stretch">
+            {/* Image Upload */}
             <Box display="flex" alignItems="center">
-              <Avatar size="lg" src={imageUrl} name={name} mr={3} />
-              <Input type="file" accept="image/*" onChange={handleImageChange} padding="5px 10px" />
+              <Avatar size="md" src={imageUrl} name={name} mr={3} />
+              <Input type="file" accept="image/*" onChange={handleImageChange} size="sm" padding="2px 5px" />
             </Box>
+
+            {/* Product Name */}
             <FormControl isRequired>
-              <FormLabel>Product Name</FormLabel>
-              <Input value={name} onChange={(e) => setName(e.target.value)} />
+              <FormLabel fontSize="sm">Product Name</FormLabel>
+              <Input size="sm" value={name} onChange={(e) => setName(e.target.value)} />
             </FormControl>
+
+            {/* Price */}
             <FormControl isRequired>
-              <FormLabel>Price (₹)</FormLabel>
-              <Input type="number" min="0" value={price} onChange={(e) => setPrice(e.target.value)} />
+              <FormLabel fontSize="sm">Price (₹)</FormLabel>
+              <Input
+                type="number"
+                min="0"
+                size="sm"
+                value={price}
+                onChange={(e) => {
+                  setPrice(e.target.value);
+                  setLastEnteredPrice(e.target.value); // Update last entered price
+                }}
+              />
             </FormControl>
+
+            {/* Category */}
             <FormControl isRequired>
-              <FormLabel>Category</FormLabel>
-              <Select value={selectedCategory?._id} onChange={handleCategoryChange}>
+              <FormLabel fontSize="sm">Category</FormLabel>
+              <Select
+                size="sm"
+                value={selectedCategory?._id || ""}
+                onChange={handleCategoryChange}
+                placeholder="Select value"
+              >
                 {categories.map((cat) => (
                   <option key={cat._id} value={cat._id}>
                     {cat.name}
@@ -163,46 +210,76 @@ const ProductForm = ({ isOpen, onClose, product, setProducts }) => {
                 ))}
               </Select>
             </FormControl>
+
+            {/* Counter No. */}
             <FormControl isRequired>
-              <FormLabel>Counter No.</FormLabel>
-              <Input type="number" value={counterNo} onChange={(e) => setCounterNo(e.target.value)} />
+              <FormLabel fontSize="sm">Counter No.</FormLabel>
+              <Input
+                type="number"
+                size="sm"
+                value={counterNo}
+                onChange={(e) => setCounterNo(e.target.value)}
+              />
             </FormControl>
 
+            {/* Variation Type */}
             <FormControl>
-              <FormLabel>Variation Type</FormLabel>
-              <Input value={variationType} onChange={(e) => setVariationType(e.target.value)} />
+              <FormLabel fontSize="sm">Variation Type</FormLabel>
+              <Input
+                size="sm"
+                value={variationType}
+                onChange={(e) => setVariationType(e.target.value)}
+              />
             </FormControl>
 
             {/* Variations Section */}
             <FormControl>
-              <FormLabel>Product Variations</FormLabel>
+              <FormLabel fontSize="sm">Product Variations</FormLabel>
               {variations.map((variation, index) => (
                 <Box key={index} display="flex" gap={2} alignItems="center">
                   <Input
-                    placeholder="Variation Name (e.g., Large, Extra Toppings)"
+                    size="sm"
+                    placeholder="Variation Name"
                     value={variation.name}
                     onChange={(e) => handleVariationChange(index, "name", e.target.value)}
                   />
                   <Input
                     type="number"
+                    size="sm"
                     placeholder="Price (₹)"
                     value={variation.price}
                     onChange={(e) => handleVariationChange(index, "price", e.target.value)}
                   />
-                  <Icon as={MdDelete as React.ElementType} colorScheme="red" size="sm" onClick={() => removeVariation(index)} />
+                  <Icon
+                    as={MdDelete as React.ElementType}
+                    color="red.500"
+                    cursor="pointer"
+                    onClick={() => removeVariation(index)}
+                  />
                 </Box>
               ))}
-              <Button mt={2} colorScheme="green" leftIcon={<AddIcon />} onClick={addVariation}>
+              <Button
+                mt={2}
+                size="sm"
+                colorScheme="green"
+                leftIcon={<AddIcon />}
+                onClick={addVariation}
+              >
                 Add Variation
               </Button>
             </FormControl>
           </VStack>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue" onClick={handleSubmit}>
+          <Button
+            size="sm"
+            colorScheme="blue"
+            onClick={handleSubmit}
+            isDisabled={!isFormValid}
+          >
             {product ? "Update" : "Add"}
           </Button>
-          <Button ml={3} onClick={onClose}>
+          <Button size="sm" ml={3} onClick={onClose}>
             Cancel
           </Button>
         </ModalFooter>

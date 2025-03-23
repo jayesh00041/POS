@@ -37,7 +37,7 @@ import avatar from 'assets/img/avatars/avatar4.png';
 
 export default function Overview() {
 	return (
-		<Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+		<Box pt={{ base: '55px', md: '80px', xl: '80px' }}>
 			{/* Main Fields */}
 			<Grid
 				templateColumns={{

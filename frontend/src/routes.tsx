@@ -17,7 +17,7 @@ import Sales from 'views/admin/sales';
 import Products from 'views/admin/products';
 import Categories from 'views/admin/categories';
 import Users from 'views/admin/users';
-import MainDashboard from 'views/admin/default';
+// import MainDashboard from 'views/admin/default';
 // import NFTMarketplace from 'views/admin/marketplace';
 // import Profile from 'views/admin/profile';
 // import DataTables from 'views/admin/dataTables';
@@ -25,6 +25,7 @@ import MainDashboard from 'views/admin/default';
 // Auth Imports
 import SignInCentered from 'views/auth/signIn';
 import { FaFileInvoice, FaProductHunt } from 'react-icons/fa';
+import { Privilege } from './contexts/PrivilegeContext';
 
 const routes = [
   {
@@ -33,6 +34,7 @@ const routes = [
     path: "/default",
     icon: <Icon as={MdHome as React.ElementType} width="20px" height="20px" color="inherit" />,
     component: <Dashboard />,
+    privilege: ""
   },
   {
     name: "New Invoice",
@@ -40,6 +42,7 @@ const routes = [
     path: "/new-invoice",
     icon: <Icon as={FaFileInvoice as React.ElementType} width="20px" height="20px" color="inherit" />,
     component: <NewInvoice />,
+    privilege: Privilege.SALES_WRITE
   },
   {
     name: "Sales",
@@ -47,6 +50,7 @@ const routes = [
     path: "/sales",
     icon: <Icon as={MdFoodBank as React.ElementType} width="20px" height="20px" color="inherit" />,
     component: <Sales />,
+    privilege: Privilege.SALES_READ
   },
   {
     name: "Products",
@@ -54,6 +58,7 @@ const routes = [
     path: "/products",
     icon: <Icon as={FaProductHunt as React.ElementType} width="20px" height="20px" color="inherit" />,
     component: <Products />,
+    privilege: Privilege.PRODUCTS_READ
   },
   {
     name: "Categories",
@@ -61,6 +66,7 @@ const routes = [
     path: "/category",
     icon: <Icon as={MdGridView as React.ElementType} width="20px" height="20px" color="inherit" />,
     component: <Categories />,
+    privilege: Privilege.CATEGORIES_READ
   },
   {
     name: "Users",
@@ -68,14 +74,16 @@ const routes = [
     path: "/users",
     icon: <Icon as={MdVerifiedUser as React.ElementType} width="20px" height="20px" color="inherit" />,
     component: <Users />,
+    privilege: Privilege.USERS_READ
   },
-  {
-    name: 'Main Dashboard',
-    layout: '/admin',
-    path: '/main-dashboard',
-    icon: <Icon as={MdHome as React.ElementType} width="20px" height="20px" color="inherit" />,
-    component: <MainDashboard />,
-  },
+  // {
+  //   name: 'Main Dashboard',
+  //   layout: '/admin',
+  //   path: '/main-dashboard',
+  //   icon: <Icon as={MdHome as React.ElementType} width="20px" height="20px" color="inherit" />,
+  //   component: <MainDashboard />,
+  //   privilege: "",
+  // },
   // {
   //   name: 'NFT Marketplace',
   //   layout: '/admin',

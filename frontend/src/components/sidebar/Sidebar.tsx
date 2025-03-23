@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-// chakra imports
+// Chakra imports
 import {
   Box,
   Flex,
@@ -27,6 +27,8 @@ import { IoMenuOutline } from 'react-icons/io5';
 function Sidebar(props: { routes: RoutesType[]; [x: string]: any }) {
   const { routes } = props;
 
+  const [isHovered, setIsHovered] = useState(false); // State to track hover
+
   let variantChange = '0.2s linear';
   let shadow = useColorModeValue(
     '14px 17px 40px 4px rgba(112, 144, 176, 0.08)',
@@ -38,11 +40,18 @@ function Sidebar(props: { routes: RoutesType[]; [x: string]: any }) {
 
   // SIDEBAR
   return (
-    <Box display={{ sm: 'none', xl: 'block' }} position="fixed" minH="100%">
+    <Box
+      display={{ sm: 'none', xl: 'block' }}
+      zIndex={99999}
+      position="fixed"
+      minH="100%"
+      onMouseEnter={() => setIsHovered(true)} // Handle hover in
+      onMouseLeave={() => setIsHovered(false)} // Handle hover out
+    >
       <Box
         bg={sidebarBg}
         transition={variantChange}
-        w="300px"
+        w={isHovered ? '300px' : '90px'} // Adjust width based on hover
         h="100vh"
         m={sidebarMargins}
         minH="100%"
@@ -55,7 +64,7 @@ function Sidebar(props: { routes: RoutesType[]; [x: string]: any }) {
           renderThumbVertical={renderThumb}
           renderView={renderView}
         >
-          <Content routes={routes} />
+          <Content routes={routes} isHovered={isHovered} /> {/* Pass hover state to Content */}
         </Scrollbars>
       </Box>
     </Box>
@@ -75,13 +84,11 @@ export function SidebarResponsive(props: { routes: RoutesType[] }) {
     'rgba(255, 255, 255, 0.5)',
     'rgba(0, 0, 0, 0.5)',
   );
-  // // SIDEBAR
+  // SIDEBAR
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
 
   const { routes } = props;
-  // let isWindows = navigator.platform.startsWith("Win");
-  //  BRAND
 
   return (
     <Flex display={{ sm: 'flex', xl: 'none' }} alignItems="center">
@@ -130,7 +137,7 @@ export function SidebarResponsive(props: { routes: RoutesType[] }) {
               renderThumbVertical={renderThumb}
               renderView={renderView}
             >
-              <Content routes={routes} onLinkClick={onClose} />
+              <Content routes={routes} onLinkClick={onClose} isHovered={true} />
             </Scrollbars>
           </DrawerBody>
         </DrawerContent>
@@ -138,6 +145,5 @@ export function SidebarResponsive(props: { routes: RoutesType[] }) {
     </Flex>
   );
 }
-// PROPS
 
 export default Sidebar;
