@@ -35,15 +35,17 @@ const InvoicePopup = ({
   const printRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = function (target) {
+    console.log(window);
     return new Promise(() => {
       console.log("forwarding print request to the main process...");
 
       const data = target.contentWindow.document.documentElement.outerHTML;
+      console.log(target.contentWindow.document.documentElement);
       //console.log(data);
       const blob = new Blob([data], {type: "text/html"});
       const url = URL.createObjectURL(blob);
       if((window as any)?.electronAPI)
-        (window as any).electronAPI.printComponent(url, (response) => {
+        (window as any).electronAPI.printComponent({url}, (response) => {
           console.log("Main: ", response);
         });
       else if((window as any).ReactNativeWebView){

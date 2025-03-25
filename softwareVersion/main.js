@@ -28,8 +28,8 @@ async function createWindow() {
 
   // load the index.html of the app
   let indexPath;
-  // indexPath = new URL("https://jayesh00041.github.io/POS/");
-  indexPath = new URL("http://localhost:3000/POS/");
+  indexPath = new URL("https://jayesh00041.github.io/POS/");
+  // indexPath = new URL("http://localhost:3000/POS/");
 
 
 
