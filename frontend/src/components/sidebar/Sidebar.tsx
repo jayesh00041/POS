@@ -57,6 +57,8 @@ function Sidebar(props: { routes: RoutesType[]; [x: string]: any }) {
         minH="100%"
         overflowX="hidden"
         boxShadow={shadow}
+        borderRight="1px solid"
+        borderColor={useColorModeValue('gray.200', 'whiteAlpha.100')}
       >
         <Scrollbars
           autoHide
