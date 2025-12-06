@@ -63,10 +63,22 @@ export default function ItemComponent({ product }) {
         boxShadow: "0px 2px 8px rgba(66, 153, 225, 0.1)",
       }}
       position="relative"
+      /* reserve a minimum height on mobile to avoid layout shifts when footer appears */
+      minH={{ base: "120px", md: "auto" }}
     >
-      <VStack align="stretch" spacing={2.5}>
-        {/* Product Image and Name */}
-        <Flex align="center" gap={2.5}>
+      <Box display="flex" flexDirection="column" height="100%">
+        {/* Main content: image, name and controls. We center this when not selected, and
+            move it up when selected to reveal the footer. */}
+        <Box
+          flex="1"
+          display="flex"
+          flexDirection="column"
+          justifyContent={isProductInCart ? 'flex-start' : 'center'}
+          transition="all 200ms ease"
+          gap={2.5}
+        >
+          {/* Product Image and Name */}
+          <Flex align="center" gap={2.5}>
           {product.imageUrl ? (
             <Image
               src={product.imageUrl}
@@ -107,9 +119,9 @@ export default function ItemComponent({ product }) {
               {product.price}
             </Text>
           </Box>
-        </Flex>
+          </Flex>
 
-        {/* Variations Menu or Quantity Controls */}
+          {/* Variations Menu or Quantity Controls */}
         {product.variations?.length > 0 ? (
           <Menu closeOnSelect={false}>
             <MenuButton
@@ -122,7 +134,8 @@ export default function ItemComponent({ product }) {
               width="100%"
               fontWeight="500"
               fontSize="xs"
-              h="32px"
+              /* larger touch target on mobile */
+              h={{ base: "44px", md: "32px" }}
             >
               {product.variationType}
             </MenuButton>
@@ -149,7 +162,8 @@ export default function ItemComponent({ product }) {
                     </Box>
                     <Flex align="center" gap={1.5} ml={3}>
                       <IconButton
-                        size="xs"
+                        /* responsive size for better touch targets */
+                        size={{ base: "sm", md: "xs" }}
                         aria-label="Decrease"
                         icon={<MinusIcon />}
                         onClick={(e) => {
@@ -160,8 +174,8 @@ export default function ItemComponent({ product }) {
                         bg={quantityButtonBg}
                         _hover={{ bg: quantityButtonHoverBg }}
                         color={textColor}
-                        h="24px"
-                        w="24px"
+                        h={{ base: "40px", md: "24px" }}
+                        w={{ base: "40px", md: "24px" }}
                       />
                       <Text 
                         minW="32px" 
@@ -173,7 +187,7 @@ export default function ItemComponent({ product }) {
                         {variationQty}
                       </Text>
                       <IconButton
-                        size="xs"
+                        size={{ base: "sm", md: "xs" }}
                         aria-label="Increase"
                         icon={<AddIcon />}
                         onClick={(e) => {
@@ -183,8 +197,8 @@ export default function ItemComponent({ product }) {
                         bg={buttonBg}
                         _hover={{ bg: buttonHoverBg }}
                         color="white"
-                        h="24px"
-                        w="24px"
+                        h={{ base: "40px", md: "24px" }}
+                        w={{ base: "40px", md: "24px" }}
                       />
                     </Flex>
                   </MenuItem>
@@ -192,7 +206,7 @@ export default function ItemComponent({ product }) {
               })}
             </MenuList>
           </Menu>
-        ) : (
+          ) : (
           <Flex align="center" justify="center" gap={2}>
             <IconButton
               size="sm"
@@ -204,8 +218,8 @@ export default function ItemComponent({ product }) {
               _hover={{ bg: quantityButtonHoverBg }}
               color={textColor}
               borderRadius="md"
-              h="32px"
-              w="32px"
+              h={{ base: "40px", md: "32px" }}
+              w={{ base: "40px", md: "32px" }}
             />
             <Box
               minW="44px"
@@ -232,31 +246,35 @@ export default function ItemComponent({ product }) {
               _hover={{ bg: buttonHoverBg }}
               color="white"
               borderRadius="md"
-              h="32px"
-              w="32px"
+              h={{ base: "40px", md: "32px" }}
+              w={{ base: "40px", md: "32px" }}
             />
           </Flex>
-        )}
+          )}
+        </Box>
 
-        {/* Total Quantity and Price - Only show when in cart */}
-        {isProductInCart && (
-          <Flex
-            direction="row"
-            justifyContent="space-between"
-            pt={2}
-            borderTopWidth="1px"
-            borderTopColor={borderColor}
-            fontSize="xs"
-          >
-            <Text fontWeight="500" color={textColorSecondary}>
-              Items: {getTotalQuantity()}
-            </Text>
-            <Text fontWeight="700" color={highlightBorderColor} fontSize="sm">
-              ₹{totalPrice}
-            </Text>
-          </Flex>
-        )}
-      </VStack>
+        {/* Footer: show when selected. We keep the space reserved but animate opacity/translate for a smooth reveal. */}
+        <Flex
+          direction="row"
+          justifyContent="space-between"
+          pt={2}
+          borderTopWidth="1px"
+          borderTopColor={borderColor}
+          fontSize="xs"
+          minH="28px"
+          alignItems="center"
+          transition="opacity 180ms ease, transform 180ms ease"
+          opacity={isProductInCart ? 1 : 0}
+          transform={isProductInCart ? 'translateY(0)' : 'translateY(6px)'}
+        >
+          <Text fontWeight="500" color={textColorSecondary}>
+            Items: {getTotalQuantity()}
+          </Text>
+          <Text fontWeight="700" color={highlightBorderColor} fontSize="sm">
+            ₹{totalPrice}
+          </Text>
+        </Flex>
+      </Box>
     </Box>
   );
 }
