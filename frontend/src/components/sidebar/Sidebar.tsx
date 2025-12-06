@@ -29,13 +29,16 @@ function Sidebar(props: { routes: RoutesType[]; [x: string]: any }) {
 
   const [isHovered, setIsHovered] = useState(false); // State to track hover
 
-  let variantChange = '0.2s linear';
+  let variantChange = '0.35s cubic-bezier(0.4, 0, 0.2, 1)';
   let shadow = useColorModeValue(
-    '14px 17px 40px 4px rgba(112, 144, 176, 0.08)',
-    'unset',
+    '0 8px 32px rgba(31, 38, 135, 0.15)',
+    '0 8px 32px rgba(0, 0, 0, 0.3)',
   );
-  // Chakra Color Mode
-  let sidebarBg = useColorModeValue('white', 'navy.800');
+  // Chakra Color Mode - Modern glassmorphism
+  let sidebarBg = useColorModeValue(
+    'rgba(255, 255, 255, 0.8)',
+    'rgba(20, 25, 40, 0.8)'
+  );
   let sidebarMargins = '0px';
 
   // SIDEBAR
@@ -50,15 +53,16 @@ function Sidebar(props: { routes: RoutesType[]; [x: string]: any }) {
     >
       <Box
         bg={sidebarBg}
+        backdropFilter="blur(8px)"
         transition={variantChange}
-        w={isHovered ? '300px' : '90px'} // Adjust width based on hover
+        w={isHovered ? '280px' : '85px'} // Adjust width based on hover
         h="100vh"
         m={sidebarMargins}
         minH="100%"
         overflowX="hidden"
         boxShadow={shadow}
         borderRight="1px solid"
-        borderColor={useColorModeValue('gray.200', 'whiteAlpha.100')}
+        borderColor={useColorModeValue('rgba(0, 0, 0, 0.06)', 'rgba(255, 255, 255, 0.08)')}
       >
         <Scrollbars
           autoHide
@@ -75,16 +79,19 @@ function Sidebar(props: { routes: RoutesType[]; [x: string]: any }) {
 
 // FUNCTIONS
 export function SidebarResponsive(props: { routes: RoutesType[] }) {
-  let sidebarBackgroundColor = useColorModeValue('white', 'navy.800');
-  let menuColor = useColorModeValue('gray.400', 'white');
+  let sidebarBackgroundColor = useColorModeValue(
+    'rgba(255, 255, 255, 0.9)',
+    'rgba(20, 25, 40, 0.9)'
+  );
+  let menuColor = useColorModeValue('gray.600', 'gray.200');
   const menushadow = useColorModeValue(
-    '14px 17px 40px 4px rgba(112, 144, 176, 0.18)',
-    '14px 17px 40px 4px rgba(112, 144, 176, 0.06)',
+    '0 8px 32px rgba(31, 38, 135, 0.15)',
+    '0 8px 32px rgba(0, 0, 0, 0.3)',
   );
 
   let menuBg = useColorModeValue(
-    'rgba(255, 255, 255, 0.5)',
-    'rgba(0, 0, 0, 0.5)',
+    'rgba(255, 255, 255, 0.7)',
+    'rgba(20, 25, 40, 0.7)',
   );
   // SIDEBAR
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -100,22 +107,34 @@ export function SidebarResponsive(props: { routes: RoutesType[] }) {
         h="max-content"
         onClick={onOpen}
         p="10px"
-        borderRadius="30px"
-        height="60px"
-        width="60px"
+        borderRadius="full"
+        height="56px"
+        width="56px"
         bg={menuBg}
+        backdropFilter="blur(8px)"
         boxShadow={menushadow}
         display="flex"
         justifyContent="center"
         alignItems="center"
+        border="1px solid"
+        borderColor={useColorModeValue('rgba(0, 0, 0, 0.06)', 'rgba(255, 255, 255, 0.08)')}
+        transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+        _hover={{
+          transform: 'scale(1.08)',
+          boxShadow: useColorModeValue(
+            '0 12px 40px rgba(31, 38, 135, 0.2)',
+            '0 12px 40px rgba(0, 0, 0, 0.4)'
+          ),
+        }}
       >
         <Icon
           as={IoMenuOutline as React.ElementType}
           color={menuColor}
           my="auto"
-          w="25px"
-          h="25px"
+          w="24px"
+          h="24px"
           _hover={{ cursor: 'pointer' }}
+          transition="all 0.3s ease"
         />
       </Flex>
       <Drawer
@@ -124,15 +143,23 @@ export function SidebarResponsive(props: { routes: RoutesType[] }) {
         placement={document.documentElement.dir === 'rtl' ? 'right' : 'left'}
         finalFocusRef={btnRef}
       >
-        <DrawerOverlay />
-        <DrawerContent w="285px" maxW="285px" bg={sidebarBackgroundColor}>
+        <DrawerOverlay backdropFilter="blur(4px)" />
+        <DrawerContent 
+          w="280px" 
+          maxW="280px" 
+          bg={sidebarBackgroundColor}
+          backdropFilter="blur(8px)"
+          borderRight="1px solid"
+          borderColor={useColorModeValue('rgba(0, 0, 0, 0.06)', 'rgba(255, 255, 255, 0.08)')}
+          boxShadow={menushadow}
+        >
           <DrawerCloseButton
             zIndex="3"
             onClick={onClose}
             _focus={{ boxShadow: 'none' }}
             _hover={{ boxShadow: 'none' }}
           />
-          <DrawerBody maxW="285px" px="0rem" pb="0">
+          <DrawerBody maxW="280px" px="0rem" pb="0">
             <Scrollbars
               autoHide
               renderTrackVertical={renderTrack}

@@ -14,11 +14,12 @@ export function SidebarLinks(props: {
   // Chakra color mode
   let location = useLocation();
   let activeColor = useColorModeValue('gray.700', 'white');
-  let inactiveColor = useColorModeValue('secondaryGray.600', 'secondaryGray.600');
+  let inactiveColor = useColorModeValue('gray.500', 'gray.400');
   let activeIcon = useColorModeValue('brand.500', 'white');
-  let textColor = useColorModeValue('secondaryGray.500', 'white');
+  let textColor = useColorModeValue('gray.600', 'gray.300');
   let brandColor = useColorModeValue('brand.500', 'brand.400');
-  let hoverBg = useColorModeValue('gray.50', 'whiteAlpha.100');
+  let activeBg = useColorModeValue('rgba(66, 153, 225, 0.1)', 'rgba(66, 153, 225, 0.15)');
+  let hoverBg = useColorModeValue('rgba(66, 153, 225, 0.05)', 'rgba(66, 153, 225, 0.08)');
   let tooltipBg = useColorModeValue('gray.800', 'gray.200');
   let tooltipColor = useColorModeValue('white', 'gray.800');
 
@@ -42,14 +43,16 @@ export function SidebarLinks(props: {
                 _hover={{
                   bg: hoverBg,
                 }}
-                borderRadius="xl"
-                mx="10px"
-                transition="all 0.2s ease"
+                borderRadius={isHovered ? "12px" : "full"}
+                mx={isHovered ? "12px" : "8px"}
+                transition="all 0.35s cubic-bezier(0.4, 0, 0.2, 1)"
+                bg={isActive ? activeBg : 'transparent'}
               >
                 <HStack
-                  spacing={isHovered ? (isActive ? '16px' : '20px') : '0px'}
-                  py="12px"
-                  ps={isHovered ? "20px" : "0px"}
+                  spacing={isHovered ? (isActive ? '12px' : '14px') : '0px'}
+                  py={isHovered ? "10px" : "12px"}
+                  ps={isHovered ? "16px" : "0px"}
+                  pr={isHovered ? "16px" : "0px"}
                   justifyContent={isHovered ? "flex-start" : "center"}
                   position="relative"
                 >
@@ -61,9 +64,12 @@ export function SidebarLinks(props: {
                   >
                     <Box
                       color={isActive ? activeIcon : textColor}
-                      me={isHovered ? "12px" : "0px"}
-                      transition="all 0.2s ease"
-                      transform={isActive ? "scale(1.1)" : "scale(1)"}
+                      me={isHovered ? "8px" : "0px"}
+                      transition="all 0.35s cubic-bezier(0.4, 0, 0.2, 1)"
+                      transform={isActive ? "scale(1.12) rotate(0deg)" : "scale(1)"}
+                      _groupHover={{
+                        transform: isActive ? "scale(1.2)" : "scale(1.05)",
+                      }}
                     >
                       {route.icon}
                     </Box>
@@ -71,41 +77,16 @@ export function SidebarLinks(props: {
                       <Text
                         me="auto"
                         color={isActive ? activeColor : textColor}
-                        fontWeight={isActive ? '700' : '500'}
+                        fontWeight={isActive ? '600' : '500'}
                         fontSize="sm"
-                        transition="all 0.2s ease"
+                        transition="all 0.35s cubic-bezier(0.4, 0, 0.2, 1)"
                         opacity={isHovered ? 1 : 0}
+                        letterSpacing={isActive ? "0.2px" : "0px"}
                       >
                         {route.name}
                       </Text>
                     )}
                   </Flex>
-                  {isActive && (
-                    <Box
-                      position="absolute"
-                      left="0"
-                      top="50%"
-                      transform="translateY(-50%)"
-                      h="60%"
-                      w="4px"
-                      bg={brandColor}
-                      borderRadius="0 5px 5px 0"
-                      transition="all 0.2s ease"
-                    />
-                  )}
-                  {isActive && isHovered && (
-                    <Box
-                      position="absolute"
-                      right="0"
-                      top="50%"
-                      transform="translateY(-50%)"
-                      w="3px"
-                      h="40%"
-                      bg={brandColor}
-                      borderRadius="5px 0 0 5px"
-                      opacity="0.5"
-                    />
-                  )}
                 </HStack>
               </Box>
             ) : (
