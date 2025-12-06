@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://pos-fvk1.onrender.com/api",
-  // baseURL: "http://localhost:8000/api",
+  // baseURL: "https://pos-fvk1.onrender.com/api",
+  baseURL: "http://localhost:8000/api",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -63,5 +63,5 @@ export const createInvoice = (data) => api.post("/invoice/", data);
 export const getSalesData = (startDate, endDate) => api.get(`/invoice?startDate=${startDate}&endDate=${endDate}`);
 
 export const getSalesOverview = (startDate, endDate, period, userId) => api.get(`/dashboard/sales-overview?startDate=${startDate}&endDate=${endDate}&period=${period}&userId=${userId}`);
-export const getProductInsights = () => api.get(`/dashboard/product-insights/`);
+export const getProductInsigts = () => api.get(`/dashboard/product-insights/`);
 export const getUserStats = () => api.get(`/dashboard/user-stats/`);
