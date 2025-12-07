@@ -102,7 +102,7 @@
   },
   "build": {
     "appId": "com.example.horizon-ui",
-    "productName": "Jalso Park",
+    "productName": "Vadodara Ponk Carnival",
     "directories": {
       "output": "dist"
     },

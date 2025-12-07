@@ -31,8 +31,6 @@ async function createWindow() {
   // indexPath = new URL("https://jayesh00041.github.io/POS/");
   indexPath = new URL("http://localhost:3000/POS/");
 
-
-
   mainWindow.once("ready-to-show", () => {
     mainWindow.show();
     if (dev) {

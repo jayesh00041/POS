@@ -30,8 +30,8 @@ const CounterWiseDataSchema = new Schema({
 
 const InvoiceSchema = new Schema({
     invoiceNumber: { type: String, required: true, unique: true },
-    customerName: { type: String, required: true },
-    mobileNumber: { type: String, required: true },
+    customerName: { type: String },
+    mobileNumber: { type: String },
     paymentMode: { type: String, required: true },
     referenceNumber: { type: String },
     cartItems: [CartItemSchema],
