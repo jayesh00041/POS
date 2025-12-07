@@ -65,3 +65,10 @@ export const getSalesData = (startDate, endDate) => api.get(`/invoice?startDate=
 export const getSalesOverview = (startDate, endDate, period, userId) => api.get(`/dashboard/sales-overview?startDate=${startDate}&endDate=${endDate}&period=${period}&userId=${userId}`);
 export const getProductInsigts = () => api.get(`/dashboard/product-insights/`);
 export const getUserStats = () => api.get(`/dashboard/user-stats/`);
+
+// payment settings Apis
+export const getPaymentSettings = () => api.get("/payment-settings/");
+export const updatePaymentSettings = (data) => api.put("/payment-settings/", data);
+export const addUpiAccount = (data) => api.post("/payment-settings/upi/add", data);
+export const removeUpiAccount = (upiId) => api.delete(`/payment-settings/upi/${upiId}`);
+export const setDefaultUpi = (data) => api.put("/payment-settings/upi/default", data);
