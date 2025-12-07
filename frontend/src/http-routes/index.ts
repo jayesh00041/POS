@@ -68,6 +68,7 @@ export const getUserStats = () => api.get(`/dashboard/user-stats/`);
 
 // payment settings Apis
 export const getPaymentSettings = () => api.get("/payment-settings/");
+export const getPaymentSettingsPublic = () => api.get("/payment-settings/public");
 export const updatePaymentSettings = (data) => api.put("/payment-settings/", data);
 export const addUpiAccount = (data) => api.post("/payment-settings/upi/add", data);
 export const removeUpiAccount = (upiId) => api.delete(`/payment-settings/upi/${upiId}`);

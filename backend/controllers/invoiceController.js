@@ -106,8 +106,6 @@ const createInvoice = async (req, res, next) => {
             data.items = Array.from(data.items.values()); // Convert Map to array
         }
 
-        console.log(counterWiseData);
-
         // Create invoice
         const invoice = await Invoice.create({
             invoiceNumber,

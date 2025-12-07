@@ -16,6 +16,11 @@ router.route("/")
     .get(isUserVarified, isAdminUser, getPaymentSettings)
     .put(isUserVarified, isAdminUser, updatePaymentSettings);
 
+// Get payment settings (public read-only) - for QR code generation and payment UI
+// No authentication required - only reads the default UPI ID (already public)
+router.route("/public")
+    .get(getPaymentSettings);
+
 // Add UPI account (admin only)
 router.route("/upi/add")
     .post(isUserVarified, isAdminUser, addUpiAccount);

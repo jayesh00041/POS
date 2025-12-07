@@ -16,6 +16,7 @@ import ProtectedRoute from './components/protectedRoute/ProtectedRoute';
 import { CartProvider } from './contexts/CartContext';
 import { CookiesProvider } from 'react-cookie';
 import { PrivilegeProvider } from './contexts/PrivilegeContext';
+import { PaymentSettingsProvider } from './contexts/PaymentSettingsContext';
 // Chakra imports
 
 export default function Main() {
@@ -34,31 +35,33 @@ export default function Main() {
       <UserProvider>
         <SnackbarProvider autoHideDuration={3000}>
           <QueryClientProvider client={queryClient}>
-            <CartProvider>
-              <CookiesProvider>
-                <Routes>
-                  <Route path="auth/*" element={<AuthLayout />} />
+            <PaymentSettingsProvider>
+              <CartProvider>
+                <CookiesProvider>
+                  <Routes>
+                    <Route path="auth/*" element={<AuthLayout />} />
 
-                  <Route
-                    path="admin/*"
-                    element={
-                      <PrivilegeProvider>
-                        <ProtectedRoute>
-                          <AdminLayout
-                            theme={currentTheme}
-                            setTheme={setCurrentTheme}
-                          />
-                        </ProtectedRoute>
-                      </PrivilegeProvider>
-                    }
-                  />
-                  <Route
-                    path="/"
-                    element={<Navigate to="/auth/sign-in" replace />}
-                  />
-                </Routes>
-              </CookiesProvider>
-            </CartProvider>
+                    <Route
+                      path="admin/*"
+                      element={
+                        <PrivilegeProvider>
+                          <ProtectedRoute>
+                            <AdminLayout
+                              theme={currentTheme}
+                              setTheme={setCurrentTheme}
+                            />
+                          </ProtectedRoute>
+                        </PrivilegeProvider>
+                      }
+                    />
+                    <Route
+                      path="/"
+                      element={<Navigate to="/auth/sign-in" replace />}
+                    />
+                  </Routes>
+                </CookiesProvider>
+              </CartProvider>
+            </PaymentSettingsProvider>
           </QueryClientProvider>
         </SnackbarProvider>
       </UserProvider>

@@ -21,6 +21,7 @@ import {
 } from '@chakra-ui/react';
 import { FaShoppingCart } from 'react-icons/fa';
 import { useCart } from '../../../../contexts/CartContext';
+import { UPIAccount, usePaymentSettings } from '../../../../contexts/PaymentSettingsContext';
 import { useMutation } from '@tanstack/react-query';
 import { createInvoice } from '../../../../http-routes/';
 import InvoicePopup from '../../../../components/invoice/InvoicePopup';
@@ -33,7 +34,7 @@ import {
   ModalFooter,
   ModalCloseButton,
 } from '@chakra-ui/react';
-import qrImage from 'assets/img/jj-icon.png';
+import qrImage from 'assets/img/logo/jalso-park-logo.png';
 
 import { QRCodeCanvas } from 'qrcode.react';
 import { enqueueSnackbar } from 'notistack';
@@ -41,10 +42,14 @@ import { enqueueSnackbar } from 'notistack';
 export default function CartComponent() {
   const { cart, removeFromCart, clearCart } = useCart();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { paymentSettings, isLoading: isUpiLoading, isError: isUpiError, refreshIfStale } = usePaymentSettings();
+  
   const [customerName, setCustomerName] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
   const [paymentMode, setPaymentMode] = useState('cash');
   const [referenceNumber, setReferenceNumber] = useState('');
+  const [selectedUpiId, setSelectedUpiId] = useState<UPIAccount | null>(null);
+  const [isRefreshingUpi, setIsRefreshingUpi] = useState(false);
 
   const [showInvoice, setShowInvoice] = useState(false);
   const [invoiceData, setInvoiceData] = useState(null);
@@ -106,12 +111,55 @@ export default function CartComponent() {
     onClose();
   };
 
-  const upiUrl = `upi://pay?pa=madanmistry1@ybl&pn=Juicy Jalso&am=${totalPrice}&tn=Juicy Jalso payment&cu=INR`;
+  /**
+   * Generate UPI URL dynamically from payment settings
+   * Returns null if no UPI is available or selected
+   */
+  const generateUpiUrl = (upiAccount: UPIAccount | null): string | null => {
+    if (!upiAccount) return null;
+    return `upi://pay?pa=${upiAccount.upiId}&pn=${upiAccount.businessName}&am=${totalPrice}&tn=${upiAccount.businessName} payment&cu=INR`;
+  };
 
-  const handlePaymentModeChange = (e) => {
+  const upiUrl = generateUpiUrl(selectedUpiId);
+
+  const getDefaultUPIAccount = (): UPIAccount | null => paymentSettings.upiAccounts.find(acc => acc.id === paymentSettings.defaultUpiId) || null; 
+
+  /**
+   * Handle payment mode change
+   * When user selects "online", fetch latest UPI from server
+   * Check cache age - refetch if stale (> 1 minute)
+   */
+  const handlePaymentModeChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     setPaymentMode(e.target.value);
     if (e.target.value === 'online') {
-      setIsQRModalOpen(true);
+      try {
+        // Refresh UPI data if stale (> 1 minute)
+        setIsRefreshingUpi(true);
+        await refreshIfStale(60 * 1000); // Refetch if older than 1 minute
+        
+        // Get the latest default UPI ID
+        if (paymentSettings?.defaultUpiId) {
+          setSelectedUpiId(getDefaultUPIAccount());
+        } else {
+          enqueueSnackbar('No UPI account configured', { variant: 'warning' });
+          setPaymentMode('cash');
+          return;
+        }
+        
+        setIsRefreshingUpi(false);
+        setIsQRModalOpen(true);
+      } catch (error) {
+        setIsRefreshingUpi(false);
+        // Fallback: Use cached UPI if available
+        if (paymentSettings?.defaultUpiId) {
+          setSelectedUpiId(getDefaultUPIAccount());
+          setIsQRModalOpen(true);
+          enqueueSnackbar('Using cached payment details', { variant: 'info' });
+        } else {
+          enqueueSnackbar('Failed to load payment details. Please try again.', { variant: 'error' });
+          setPaymentMode('cash');
+        }
+      }
     }
   };
 
@@ -370,37 +418,71 @@ export default function CartComponent() {
           <ModalHeader>Scan to Pay</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Box display="flex" justifyContent="center">
-              <QRCodeCanvas
-                value={upiUrl}
-                size={200}
-                bgColor="#ffffff"
-                fgColor="#000000"
-                imageSettings={{
-                  src: qrImage,
-                  height: 40, // Image height in pixels
-                  width: 40, // Image width in pixels
-                  excavate: true, // Makes the background of the image transparent
-                }}
-              />
-            </Box>
-            <Text mt={3} textAlign="center">
-              Amount: ₹{totalPrice}
-            </Text>
-            <Box mt={3}>
-              <Text fontSize="sm" mb={1}>
-                Reference Number
-              </Text>
-              <Input
-                size="sm"
-                value={referenceNumber}
-                onChange={(e) => setReferenceNumber(e.target.value)}
-                placeholder="Enter reference number"
-              />
-            </Box>
+            {isRefreshingUpi ? (
+              // Loading state while fetching UPI
+              <Flex direction="column" align="center" justify="center" py={6}>
+                <Spinner size="lg" color="blue.500" mb={3} />
+                <Text fontSize="sm" color="gray.500">
+                  Fetching payment details...
+                </Text>
+              </Flex>
+            ) : upiUrl ? (
+              // QR code display
+              <>
+                <Box display="flex" justifyContent="center">
+                  <QRCodeCanvas
+                    value={upiUrl}
+                    size={200}
+                    bgColor="#ffffff"
+                    fgColor="#000000"
+                    imageSettings={{
+                      src: qrImage,
+                      height: 40, // Image height in pixels
+                      width: 40, // Image width in pixels
+                      excavate: true, // Makes the background of the image transparent
+                    }}
+                  />
+                </Box>
+                <Text mt={3} textAlign="center" fontWeight="bold">
+                  Amount: ₹{totalPrice}
+                </Text>
+                {selectedUpiId && (
+                  <Text mt={1} fontSize="xs" textAlign="center" color="gray.500">
+                    {selectedUpiId.businessName} | 
+                    {selectedUpiId.upiId}
+                  </Text>
+                )}
+                <Box mt={3}>
+                  <Text fontSize="sm" mb={1}>
+                    Reference Number
+                  </Text>
+                  <Input
+                    size="sm"
+                    value={referenceNumber}
+                    onChange={(e) => setReferenceNumber(e.target.value)}
+                    placeholder="Enter reference number"
+                  />
+                </Box>
+              </>
+            ) : (
+              // Error state - no UPI available
+              <Flex direction="column" align="center" justify="center" py={6}>
+                <Text fontSize="sm" color="red.500" textAlign="center">
+                  ⚠️ No UPI account configured for payments
+                </Text>
+                <Text fontSize="xs" color="gray.500" mt={2} textAlign="center">
+                  Please contact administrator to configure payment settings
+                </Text>
+              </Flex>
+            )}
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="green" mr={3} onClick={handleApprovePayment}>
+            <Button 
+              colorScheme="green" 
+              mr={3} 
+              onClick={handleApprovePayment}
+              isDisabled={!upiUrl || isRefreshingUpi}
+            >
               Approve
             </Button>
             <Button

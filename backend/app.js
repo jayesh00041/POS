@@ -57,5 +57,5 @@ app.use(globalErrorHanddler);
 
 // Start the server
 app.listen(PORT, () => {
-    console.log(`🚀 Server is running`);
+    // Server running
 });
