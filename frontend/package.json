@@ -1,6 +1,6 @@
 {
-  "name": "jalso-park",
-  "version": "3.0.0",
+  "name": "vadodara-ponk-carnival",
+  "version": "2.0.0",
   "private": true,
   "homepage": "https://jayesh00041.github.io/POS/",
   "main": "main.js",
@@ -50,7 +50,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && cp main.js build/main.js",
+    "build": "react-scripts build && copy main.js build/main.js",
     "electron": "electron .",
     "electron-build": "electron-builder",
     "preelectron-build": "npm run build",

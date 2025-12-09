@@ -252,10 +252,228 @@ const setDefaultUpi = async (req, res, next) => {
     }
 };
 
+// ============ PRINTER MANAGEMENT ============
+
+// Add new printer
+
+// ===== SIMPLIFIED PRINTER MANAGEMENT (SINGLE GLOBAL DEFAULT) =====
+
+// Get all printers
+const getPrinters = async (req, res, next) => {
+    try {
+        let settings = await PaymentSettings.findOne();
+        if (!settings) {
+            settings = await PaymentSettings.create({
+                enableCash: true,
+                enableUpi: true,
+                upiAccounts: [],
+                printers: [],
+            });
+        }
+
+        res.status(200).json({
+            status: "success",
+            data: {
+                printers: settings.printers,
+                defaultPrinterId: settings.defaultPrinterId,
+            },
+        });
+    } catch (error) {
+        next(createHttpError(500, "Error fetching printers"));
+    }
+};
+
+// Add new printer
+const addPrinter = async (req, res, next) => {
+    try {
+        const { name, type, deviceName, silent, printBackground, color, copies } = req.body;
+
+        // Validate required fields
+        if (!name || !deviceName) {
+            return next(createHttpError(400, "Name and device name are required"));
+        }
+
+        let settings = await PaymentSettings.findOne();
+        if (!settings) {
+            settings = await PaymentSettings.create({
+                enableCash: true,
+                enableUpi: true,
+                upiAccounts: [],
+                printers: [],
+            });
+        }
+
+        const newPrinter = {
+            name,
+            type: type || 'thermal-80mm',
+            deviceName,
+            silent: silent !== false,
+            printBackground: printBackground === true,
+            color: color === true,
+            copies: copies || 1,
+            isDefault: settings.printers.length === 0, // First printer is default
+            isActive: true,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        };
+
+        settings.printers.push(newPrinter);
+        
+        // If this is the first printer, set it as default
+        if (newPrinter.isDefault) {
+            settings.defaultPrinterId = newPrinter._id;
+        }
+
+        await settings.save();
+
+        res.status(201).json({
+            status: "success",
+            message: "Printer added successfully",
+            data: { printer: newPrinter },
+        });
+    } catch (error) {
+        next(createHttpError(500, "Error adding printer"));
+    }
+};
+
+// Update printer
+const updatePrinter = async (req, res, next) => {
+    try {
+        const { printerId } = req.params;
+        const updates = req.body;
+
+        // Don't allow changing isDefault via update endpoint
+        delete updates.isDefault;
+
+        let settings = await PaymentSettings.findOne();
+        if (!settings) {
+            return next(createHttpError(404, "Payment settings not found"));
+        }
+
+        const printer = settings.printers.id(printerId);
+        if (!printer) {
+            return next(createHttpError(404, "Printer not found"));
+        }
+
+        // Update fields
+        Object.assign(printer, { ...updates, updatedAt: new Date() });
+
+        await settings.save();
+
+        res.status(200).json({
+            status: "success",
+            message: "Printer updated successfully",
+            data: { printer },
+        });
+    } catch (error) {
+        next(createHttpError(500, "Error updating printer"));
+    }
+};
+
+// Delete printer
+const deletePrinter = async (req, res, next) => {
+    try {
+        const { printerId } = req.params;
+
+        let settings = await PaymentSettings.findOne();
+        if (!settings) {
+            return next(createHttpError(404, "Payment settings not found"));
+        }
+
+        const printer = settings.printers.id(printerId);
+        if (!printer) {
+            return next(createHttpError(404, "Printer not found"));
+        }
+
+        // Prevent deletion of default printer
+        if (printer.isDefault) {
+            return next(createHttpError(400, "Cannot delete the default printer. Set another printer as default first."));
+        }
+
+        settings.printers.id(printerId).deleteOne();
+
+        await settings.save();
+
+        res.status(200).json({
+            status: "success",
+            message: "Printer deleted successfully",
+        });
+    } catch (error) {
+        next(createHttpError(500, "Error deleting printer"));
+    }
+};
+
+// Set printer as default
+const setDefaultPrinter = async (req, res, next) => {
+    try {
+        const { printerId } = req.params;
+
+        let settings = await PaymentSettings.findOne();
+        if (!settings) {
+            return next(createHttpError(404, "Payment settings not found"));
+        }
+
+        const printer = settings.printers.id(printerId);
+        if (!printer) {
+            return next(createHttpError(404, "Printer not found"));
+        }
+
+        // Set all to false
+        settings.printers.forEach(p => p.isDefault = false);
+
+        // Set this one to true
+        printer.isDefault = true;
+        settings.defaultPrinterId = printerId;
+
+        await settings.save();
+
+        res.status(200).json({
+            status: "success",
+            message: "Default printer set successfully",
+            data: { printer },
+        });
+    } catch (error) {
+        next(createHttpError(500, "Error setting default printer"));
+    }
+};
+
+// Get default printer (used for invoice creation)
+const getDefaultPrinter = async (req, res, next) => {
+    try {
+        let settings = await PaymentSettings.findOne();
+        if (!settings) {
+            return next(createHttpError(404, "Payment settings not found"));
+        }
+
+        const defaultPrinter = settings.printers.find(p => p.isDefault === true);
+
+        if (!defaultPrinter) {
+            // Return null if no default set, don't error
+            return res.status(200).json({
+                status: "success",
+                data: { printer: null },
+            });
+        }
+
+        res.status(200).json({
+            status: "success",
+            data: { printer: defaultPrinter },
+        });
+    } catch (error) {
+        next(createHttpError(500, "Error fetching default printer"));
+    }
+};
+
 module.exports = {
     getPaymentSettings,
     updatePaymentSettings,
     addUpiAccount,
     removeUpiAccount,
     setDefaultUpi,
+    getPrinters,
+    addPrinter,
+    updatePrinter,
+    deletePrinter,
+    setDefaultPrinter,
+    getDefaultPrinter,
 };

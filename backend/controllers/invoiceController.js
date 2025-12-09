@@ -1,5 +1,6 @@
 const Invoice = require("../models/invoiceModel");
 const createHttpError = require("http-errors");
+const PaymentSettings = require("../models/paymentSettingsModel");
 
 const CounterToken = require("../models/counterTokenModel");
 const dayjs = require("dayjs");
@@ -122,9 +123,24 @@ const createInvoice = async (req, res, next) => {
         const dbInvoice = await Invoice.findById(invoice._id)
             .populate('createdBy', 'name')
 
+        // Fetch default printer configuration from PaymentSettings
+        const paymentSettings = await PaymentSettings.findOne();
+        let printerConfig = null;
+        
+        if (paymentSettings && paymentSettings.printers && paymentSettings.printers.length > 0) {
+            // Get the default printer (simplified approach - global default only)
+            printerConfig = paymentSettings.printers.find(p => p.isDefault === true && p.isActive === true);
+            
+            // Fallback: if no default set, use first active printer
+            if (!printerConfig) {
+                printerConfig = paymentSettings.printers.find(p => p.isActive === true);
+            }
+        }
+
         res.status(200).json({
             status: "success",
             invoice: dbInvoice,
+            printerConfig: printerConfig,
         });
     } catch (error) {
         next(error);

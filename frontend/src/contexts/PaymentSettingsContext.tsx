@@ -71,7 +71,6 @@ export function PaymentSettingsProvider({ children }: PaymentSettingsProviderPro
       try {
         const response = await getPaymentSettingsPublic();
         setLastFetchTime(Date.now());
-        debugger;
         return response.data.data as PaymentSettings;
       } catch (err) {
         setLastFetchTime(Date.now());

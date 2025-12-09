@@ -53,6 +53,7 @@ export default function CartComponent() {
 
   const [showInvoice, setShowInvoice] = useState(false);
   const [invoiceData, setInvoiceData] = useState(null);
+  const [printerConfig, setPrinterConfig] = useState(null);
 
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
 
@@ -62,6 +63,10 @@ export default function CartComponent() {
     mutationFn: async (formData: any) => createInvoice(formData),
     onSuccess: (data) => {
       setInvoiceData(data.data.invoice);
+      // Extract printer config from response
+      if (data.data.printerConfig) {
+        setPrinterConfig(data.data.printerConfig);
+      }
     },
     onError: (error) =>
       enqueueSnackbar('Error creating invoice', { variant: 'error' }),
@@ -515,9 +520,11 @@ export default function CartComponent() {
         isOpen={showInvoice}
         invoice={invoiceData}
         duplicateCopy={false}
+        printerConfig={printerConfig}
         onClose={() => {
           clearCart();
           setInvoiceData(null);
+          setPrinterConfig(null);
         }}
       />
     </>

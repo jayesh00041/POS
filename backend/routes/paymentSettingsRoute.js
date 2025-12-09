@@ -5,6 +5,12 @@ const {
     addUpiAccount,
     removeUpiAccount,
     setDefaultUpi,
+    getPrinters,
+    addPrinter,
+    updatePrinter,
+    deletePrinter,
+    setDefaultPrinter,
+    getDefaultPrinter,
 } = require("../controllers/paymentSettingsController");
 const { isUserVarified } = require("../middlewares/tokenValidator");
 const { isAdminUser } = require("../middlewares/adminAccessHandler");
@@ -32,5 +38,28 @@ router.route("/upi/:upiId")
 // Set default UPI account (admin only)
 router.route("/upi/default")
     .put(isUserVarified, isAdminUser, setDefaultUpi);
+
+// ============ PRINTER ROUTES (SIMPLIFIED - GLOBAL DEFAULT ONLY) ============
+
+// Get all printers (admin only)
+router.route("/printer/list")
+    .get(isUserVarified, isAdminUser, getPrinters);
+
+// Add new printer (admin only)
+router.route("/printer/add")
+    .post(isUserVarified, isAdminUser, addPrinter);
+
+// Update printer (admin only)
+router.route("/printer/:printerId")
+    .put(isUserVarified, isAdminUser, updatePrinter)
+    .delete(isUserVarified, isAdminUser, deletePrinter);
+
+// Set printer as default (admin only)
+router.route("/printer/:printerId/set-default")
+    .put(isUserVarified, isAdminUser, setDefaultPrinter);
+
+// Get default printer (public - used for invoice generation)
+router.route("/printer/default")
+    .get(getDefaultPrinter);
 
 module.exports = router;

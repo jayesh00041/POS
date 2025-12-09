@@ -73,3 +73,11 @@ export const updatePaymentSettings = (data) => api.put("/payment-settings/", dat
 export const addUpiAccount = (data) => api.post("/payment-settings/upi/add", data);
 export const removeUpiAccount = (upiId) => api.delete(`/payment-settings/upi/${upiId}`);
 export const setDefaultUpi = (data) => api.put("/payment-settings/upi/default", data);
+
+// Printer Apis (Simplified - Global Default Only)
+export const getPrinters = () => api.get("/payment-settings/printer/list");
+export const addPrinter = (data) => api.post("/payment-settings/printer/add", data);
+export const updatePrinter = (printerId, data) => api.put(`/payment-settings/printer/${printerId}`, data);
+export const deletePrinter = (printerId) => api.delete(`/payment-settings/printer/${printerId}`);
+export const setDefaultPrinter = (printerId) => api.put(`/payment-settings/printer/${printerId}/set-default`);
+export const getDefaultPrinter = () => api.get("/payment-settings/printer/default");

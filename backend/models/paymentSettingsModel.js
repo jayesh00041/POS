@@ -27,6 +27,60 @@ const upiAccountSchema = new mongoose.Schema({
     },
 }, { _id: false });
 
+// Simplified Printer Configuration schema (SINGLE GLOBAL DEFAULT)
+const printerSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    type: {
+        type: String,
+        enum: ['thermal-80mm', 'thermal-58mm', 'standard-a4'],
+        default: 'thermal-80mm',
+    },
+    silent: {
+        type: Boolean,
+        default: true,
+    },
+    printBackground: {
+        type: Boolean,
+        default: false,
+    },
+    color: {
+        type: Boolean,
+        default: false,
+    },
+    copies: {
+        type: Number,
+        default: 1,
+        min: 1,
+        max: 10,
+    },
+    deviceName: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    isDefault: {
+        type: Boolean,
+        default: false,
+        description: 'Only ONE printer can have this as true',
+    },
+    isActive: {
+        type: Boolean,
+        default: true,
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now,
+    },
+}, { _id: true });
+
 // Main Payment Settings schema
 const paymentSettingsSchema = new mongoose.Schema({
     enableCash: {
@@ -48,6 +102,12 @@ const paymentSettingsSchema = new mongoose.Schema({
             },
             message: 'Default UPI ID must exist in UPI accounts',
         },
+    },
+    printers: [printerSchema],
+    defaultPrinterId: {
+        type: mongoose.Schema.Types.ObjectId,
+        default: null,
+        description: 'Reference to the default printer (only one can be set)',
     },
 }, { timestamps: true });
 

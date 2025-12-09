@@ -27,7 +27,7 @@ import {
 } from '@chakra-ui/react';
 import { MdPayments, MdPrint, MdBusiness, MdInfo } from 'react-icons/md';
 import PaymentSettings from './PaymentSettings';
-import PrinterSettings from './PrinterSettings';
+import PrinterSettingsPage from './PrinterSettingsPage';
 import BrandSettings from './BrandSettings';
 
 export default function Settings() {
@@ -133,29 +133,6 @@ export default function Settings() {
                     <Text display={{ base: 'none', md: 'block' }}>Printer</Text>
                   </Tab>
 
-                  <Tab
-                    py="12px"
-                    px="20px"
-                    fontSize="sm"
-                    fontWeight="500"
-                    color={useColorModeValue('gray.600', 'gray.300')}
-                    _selected={{
-                      color: activeTextColor,
-                      borderLeft: '3px solid',
-                      borderColor: 'brand.500',
-                      bg: tabBg,
-                      fontWeight: '600',
-                    }}
-                    whiteSpace="nowrap"
-                    borderRadius={{ base: '8px', md: '0px' }}
-                    transition="all 0.3s ease"
-                    display="flex"
-                    alignItems="center"
-                    gap="10px"
-                  >
-                    <Icon as={MdBusiness as React.ElementType} w="18px" h="18px" />
-                    <Text display={{ base: 'none', md: 'block' }}>Brand</Text>
-                  </Tab>
                 </TabList>
               </Box>
 
@@ -167,7 +144,7 @@ export default function Settings() {
                   </TabPanel>
 
                   <TabPanel p={{ base: '20px', md: '40px' }}>
-                    <PrinterSettings />
+                    <PrinterSettingsPage />
                   </TabPanel>
 
                   <TabPanel p={{ base: '20px', md: '40px' }}>
