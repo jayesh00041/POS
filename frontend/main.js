@@ -1,14 +1,14 @@
 "use strict";
 
-const {app, ipcMain, BrowserWindow} = require("electron");
+const { app, ipcMain, BrowserWindow } = require("electron");
 const path = require("path");
 
 let mainWindow;
 let dev = false;
 if (
-    process.defaultApp ||
-    /[\\/]electron-prebuilt[\\/]/.test(process.execPath) ||
-    /[\\/]electron[\\/]/.test(process.execPath)
+  process.defaultApp ||
+  /[\\/]electron-prebuilt[\\/]/.test(process.execPath) ||
+  /[\\/]electron[\\/]/.test(process.execPath)
 ) {
   dev = true;
 }
@@ -26,12 +26,13 @@ async function createWindow() {
     },
   });
 
-  // load the index.html of the app
   let indexPath;
-  // indexPath = new URL("https://jayesh00041.github.io/POS/");
-  indexPath = new URL("http://localhost:3000/POS/");
 
-
+  if (dev) {
+    indexPath = "http://localhost:3000";
+  } else {
+    indexPath = `file://${path.join(__dirname, "build", "index.html")}`;
+  }
 
   mainWindow.once("ready-to-show", () => {
     mainWindow.show();
@@ -89,11 +90,11 @@ const printOptions = {
 };
 
 //handle print
-ipcMain.handle("printComponent", async (event, {url, printerName}) => {
-  if(printerName)
+ipcMain.handle("printComponent", async (event, { url, printerName }) => {
+  if (printerName)
     printOptions.printerName = printerName;
 
-  const win = new BrowserWindow({show: false});
+  const win = new BrowserWindow({ show: false });
 
   win.webContents.on("did-finish-load", () => {
     console.log("Available Printers:", win.webContents)
