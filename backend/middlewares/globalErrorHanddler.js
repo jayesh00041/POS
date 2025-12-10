@@ -1,5 +1,5 @@
 const config = require("../config/config");
-console.log(config);
+
 const globalErrorHanddler = (err, req, res, next) => {
     const statusCode = err.statusCode || 500;
     return res.status(statusCode).json({

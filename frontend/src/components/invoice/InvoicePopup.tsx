@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -16,9 +16,11 @@ import {
   Tbody,
   Td,
   Thead,
+  Spinner,
 } from '@chakra-ui/react';
 import { useReactToPrint } from 'react-to-print';
 import { formatDate } from 'shared';
+import { enqueueSnackbar } from 'notistack';
 import duplicateCopyImage from 'assets/img/layout/DuplicateCopy.jpg';
 
 const InvoicePopup = ({
@@ -26,37 +28,83 @@ const InvoicePopup = ({
   isOpen,
   duplicateCopy,
   onClose,
+  printerConfig,
 }: {
   invoice: any;
   isOpen: boolean;
   duplicateCopy: boolean;
   onClose: () => void;
+  printerConfig?: any;
 }) => {
   const printRef = useRef<HTMLDivElement>(null);
+  const [isPrinting, setIsPrinting] = useState(false);
+
+  // Setup Electron print result listener
+  useEffect(() => {
+    if ((window as any)?.electronAPI) {
+      const handlePrintResult = (result: any) => {
+        setIsPrinting(false);
+        if (result.status === "success") {
+          enqueueSnackbar("Receipt printed successfully!", { variant: "success" });
+        } else {
+          enqueueSnackbar(`Print failed: ${result.message}`, { variant: "error" });
+        }
+      };
+
+      // Listen for print results from main process
+      (window as any).ipcRenderer?.on("print-result", handlePrintResult);
+      
+      return () => {
+        (window as any).ipcRenderer?.removeListener("print-result", handlePrintResult);
+      };
+    }
+  }, []);
 
   const handlePrint = function (target) {
-    console.log(window);
-    return new Promise(() => {
-      console.log("forwarding print request to the main process...");
+    return new Promise<void>((resolve) => {
+      try {
+        setIsPrinting(true);
 
-      const data = target.contentWindow.document.documentElement.outerHTML;
-      console.log(target.contentWindow.document.documentElement);
-      //console.log(data);
-      const blob = new Blob([data], {type: "text/html"});
-      const url = URL.createObjectURL(blob);
-      if((window as any)?.electronAPI)
-        (window as any).electronAPI.printComponent({url}, (response) => {
-          console.log("Main: ", response);
-        });
-      else if((window as any).ReactNativeWebView){
-        const dataToPrint = {
-          data: url,
-          message: 'print-component',
-        };
-        (window as any).ReactNativeWebView.postMessage(JSON.stringify(dataToPrint));
+        // Extract invoice HTML from iframe
+        const htmlContent = target.contentWindow.document.documentElement.outerHTML;
+
+        // Detect platform and call appropriate API
+        if ((window as any)?.electronAPI) {
+          // Desktop: Electron with dynamic printer config
+          (window as any).electronAPI.printComponent(
+            {
+              htmlContent, // Send HTML content directly instead of blob URL
+              printerConfig: printerConfig || null,
+            },
+            (response: any) => {
+              // Success or failure handled by print-result listener
+              resolve();
+            }
+          );
+        } else if ((window as any)?.ReactNativeWebView) {
+          // Mobile: React Native Webview
+          const dataToPrint = {
+            data: htmlContent,
+            message: "print-component",
+            printerConfig: printerConfig || null,
+          };
+          (window as any).ReactNativeWebView.postMessage(JSON.stringify(dataToPrint));
+          setIsPrinting(false);
+          enqueueSnackbar("Print request sent to mobile app", { variant: "info" });
+          resolve();
+        } else {
+          // Fallback: Browser print dialog
+          setIsPrinting(false);
+          enqueueSnackbar("No print API available. Using browser print.", { variant: "warning" });
+          window.print();
+          resolve();
+        }
+      } catch (error: any) {
+        setIsPrinting(false);
+        const errorMessage = typeof error === 'string' ? error : (error?.message || 'Unknown error');
+        enqueueSnackbar(`Error: ${errorMessage}`, { variant: "error" });
+        resolve();
       }
-       
-      //console.log('Main: ', data);
     });
   };
 
@@ -99,9 +147,9 @@ const InvoicePopup = ({
               {/* Business Header */}
               <Box textAlign="center" mb={4}>
                 <Text fontSize="lg" fontWeight="bold">
-                  Juicy Jalso
+                  Vadodara Ponk Carnival
                 </Text>
-                <Text fontSize="sm">123 Business Street, City, Country</Text>
+                <Text fontSize="sm"> जैसी वेज मंचूरियन ग्रेवी वाली | Nilamber Circle, Opp Empire Edge, Gotri-Bhayli Road, Vadodara, Gujarat, India 390007</Text>
                 <Text fontSize="sm">+91-8866886639</Text>
               </Box>
 
@@ -277,11 +325,23 @@ const InvoicePopup = ({
 
           {/* Buttons */}
           <Flex justify="space-between" mt={4}>
-            <Button onClick={onClose} colorScheme="gray">
+            <Button onClick={onClose} colorScheme="gray" isDisabled={isPrinting}>
               Close
             </Button>
-            <Button onClick={() => handleInvoicePrint()} colorScheme="blue">
-              Print
+            <Button 
+              onClick={() => handleInvoicePrint()} 
+              colorScheme="blue"
+              isLoading={isPrinting}
+              loadingText="Printing..."
+            >
+              {isPrinting ? (
+                <>
+                  <Spinner size="sm" mr={2} />
+                  Printing...
+                </>
+              ) : (
+                "Print"
+              )}
             </Button>
           </Flex>
         </ModalBody>
