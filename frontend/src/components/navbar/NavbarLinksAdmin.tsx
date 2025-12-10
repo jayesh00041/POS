@@ -14,7 +14,6 @@ import {
   useColorModeValue,
   useColorMode,
   Divider,
-  Badge,
 } from '@chakra-ui/react';
 // Custom Components
 // import { ItemContent } from '../../../../components/menu/ItemContent';
@@ -27,7 +26,7 @@ import React from 'react';
 // import navImage from 'assets/img/layout/Navbar.png';
 // import { MdNotificationsNone, MdInfoOutline } from 'react-icons/md';
 import { IoMdMoon, IoMdSunny } from 'react-icons/io';
-import { FiLogOut, FiUser, FiSettings } from 'react-icons/fi';
+import { FiLogOut, FiUser } from 'react-icons/fi';
 import routes from '../../routes';
 import { useUser } from '../../contexts/UserContext';
 import { useMutation } from '@tanstack/react-query';

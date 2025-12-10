@@ -5,7 +5,6 @@ import {
   HStack,
   Text,
   Button,
-  useColorMode,
   useDisclosure,
   SimpleGrid,
   Flex,
@@ -25,7 +24,6 @@ import { getSalesOverview } from '../../../../http-routes/index';
 import { useMutation } from '@tanstack/react-query';
 
 const Dashboard = () => {
-  const { colorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   // Calculate default dates
   const today = new Date();

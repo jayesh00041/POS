@@ -42,7 +42,7 @@ import { enqueueSnackbar } from 'notistack';
 export default function CartComponent() {
   const { cart, removeFromCart, clearCart } = useCart();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { paymentSettings, isLoading: isUpiLoading, isError: isUpiError, refreshIfStale } = usePaymentSettings();
+  const { paymentSettings, refreshIfStale } = usePaymentSettings();
   
   const [customerName, setCustomerName] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
@@ -68,7 +68,7 @@ export default function CartComponent() {
         setPrinterConfig(data.data.printerConfig);
       }
     },
-    onError: (error) =>
+    onError: () =>
       enqueueSnackbar('Error creating invoice', { variant: 'error' }),
   });
 

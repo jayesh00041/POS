@@ -16,7 +16,6 @@ import {
   useColorModeValue,
   useToast,
   Switch,
-  Grid,
   Radio,
   RadioGroup,
   Stack,
@@ -87,7 +86,7 @@ export default function PaymentSettings() {
 
   useEffect(() => {
     loadPaymentSettings();
-  }, []);
+  });
 
   const handleAddUPI = async () => {
     if (!newUpiId.trim() || !newBusinessName.trim()) {

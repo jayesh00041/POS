@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Box,
   Flex,
-  Grid,
   Text,
   Tabs,
   TabList,
@@ -10,22 +9,10 @@ import {
   Tab,
   TabPanel,
   useColorModeValue,
-  Button,
-  Input,
-  FormControl,
-  FormLabel,
-  VStack,
-  HStack,
-  Card,
-  CardBody,
-  CardHeader,
   Heading,
-  Divider,
   Icon,
-  useToast,
-  Spinner,
 } from '@chakra-ui/react';
-import { MdPayments, MdPrint, MdBusiness, MdInfo } from 'react-icons/md';
+import { MdPayments, MdPrint } from 'react-icons/md';
 import PaymentSettings from './PaymentSettings';
 import PrinterSettingsPage from './PrinterSettingsPage';
 import BrandSettings from './BrandSettings';
@@ -34,12 +21,9 @@ export default function Settings() {
   const bgColor = useColorModeValue('white', 'navy.700');
   const textColor = useColorModeValue('gray.800', 'white');
   const borderColor = useColorModeValue('gray.200', 'whiteAlpha.100');
-  const cardBg = useColorModeValue('gray.50', 'navy.800');
   const tabBg = useColorModeValue('rgba(66, 153, 225, 0.1)', 'rgba(66, 153, 225, 0.15)');
-  const activeBg = useColorModeValue('white', 'navy.700');
   const activeTextColor = useColorModeValue('brand.500', 'brand.400');
 
-  const toast = useToast();
 
   return (
     <Flex direction="column" pt={{ base: '120px', md: '75px' }} pb="40px">

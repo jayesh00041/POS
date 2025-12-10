@@ -64,7 +64,6 @@ export function PaymentSettingsProvider({ children }: PaymentSettingsProviderPro
     isError,
     error,
     refetch,
-    dataUpdatedAt,
   } = useQuery({
     queryKey: ['paymentSettings'],
     queryFn: async () => {

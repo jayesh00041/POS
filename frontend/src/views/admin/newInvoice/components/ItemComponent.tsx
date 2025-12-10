@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Box,
   Flex,
@@ -12,7 +11,6 @@ import {
   MenuItem,
   IconButton,
   useColorModeValue,
-  VStack,
 } from "@chakra-ui/react";
 import { ChevronDownIcon, AddIcon, MinusIcon } from "@chakra-ui/icons";
 import { useCart } from "../../../../contexts/CartContext";

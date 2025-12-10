@@ -6,7 +6,6 @@ import {
   Spinner,
   Avatar,
   Image,
-  useBreakpointValue,
   Input,
   Text,
   SimpleGrid,
@@ -32,7 +31,6 @@ export default function NewInvoiceComponent() {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const bgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.600');
   const categoryBg = useColorModeValue('gray.50', 'gray.700');
   const categoryActiveBg = useColorModeValue('blue.500', 'blue.600');
   const categoryActiveColor = useColorModeValue('white', 'white');
@@ -96,7 +94,6 @@ export default function NewInvoiceComponent() {
     }
   }, [searchTerm, categories]);
 
-  const isMobile = useBreakpointValue({ base: true, md: false });
 
   // Get products for selected category or all products
   const getDisplayProducts = () => {

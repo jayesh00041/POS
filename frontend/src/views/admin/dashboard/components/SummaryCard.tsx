@@ -1,5 +1,5 @@
 import { Box, Flex, Text, Icon, useColorModeValue } from '@chakra-ui/react';
-import { FaShoppingCart, FaRupeeSign, FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import Card from '../../../../components/card/Card';
 
 interface SummaryCardProps {

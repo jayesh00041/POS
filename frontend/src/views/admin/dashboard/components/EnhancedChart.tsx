@@ -1,4 +1,4 @@
-import { Box, useColorModeValue, useColorMode } from '@chakra-ui/react';
+import { Box, useColorMode } from '@chakra-ui/react';
 import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -28,9 +28,6 @@ interface EnhancedChartProps {
 
 const EnhancedChart = ({ periodData, dataType }: EnhancedChartProps) => {
   const { colorMode } = useColorMode();
-  const cardBg = useColorModeValue('white', 'navy.800');
-  const borderColor = useColorModeValue('gray.200', 'whiteAlpha.100');
-  const textColor = useColorModeValue('secondaryGray.900', 'white');
   const isDark = colorMode === 'dark';
 
   // Create gradient colors
