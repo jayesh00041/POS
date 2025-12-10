@@ -126,7 +126,6 @@ const loginUser = async (req, res, next) => {
 
 const getUserData = async (req, res, next) => {
     try {
-        console.log("req.user", req.user);
         const user = await User.findById(req.user._id);
         res.status(200).json({
             status: "success",

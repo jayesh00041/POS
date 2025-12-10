@@ -5,7 +5,6 @@ const createHttpError = require("http-errors");
 // Save or update category
 const saveOrUpdateCategory = async (req, res, next) => {
     try {
-        console.log(req.body);
         const { id, name, counterNo } = req.body;
         let imageUrl = null;
 
@@ -21,7 +20,6 @@ const saveOrUpdateCategory = async (req, res, next) => {
                 { new: true }
             );
         } else {
-            console.log({ name, imageUrl, counterNo });
             category = await Category.create({ name, imageUrl, counterNo });
         }
 

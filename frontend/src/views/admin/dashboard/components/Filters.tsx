@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  Box,
   Select,
   Button,
   Stack,
@@ -13,6 +14,10 @@ import {
   Input,
   FormControl,
   FormLabel,
+  SimpleGrid,
+  useColorModeValue,
+  Text,
+  Divider,
 } from '@chakra-ui/react';
 
 interface FiltersProps {
@@ -27,6 +32,39 @@ const Filters = ({ isOpen, onClose, users, filters, onFilterChange }: FiltersPro
   const [userId, setUserId] = useState(filters.userId);
   const [startDate, setStartDate] = useState(filters.startDate);
   const [endDate, setEndDate] = useState(filters.endDate);
+  const cardBg = useColorModeValue('white', 'navy.800');
+  const textColor = useColorModeValue('secondaryGray.900', 'white');
+
+  const formatDate = (date: Date) => {
+    return date.toISOString().split('T')[0];
+  };
+
+  const getQuickDatePresets = () => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    const last7Days = new Date(today);
+    last7Days.setDate(today.getDate() - 7);
+    const last30Days = new Date(today);
+    last30Days.setDate(today.getDate() - 30);
+    const thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    const lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
+
+    return [
+      { label: 'Today', start: formatDate(today), end: formatDate(today) },
+      { label: 'Yesterday', start: formatDate(yesterday), end: formatDate(yesterday) },
+      { label: 'Last 7 Days', start: formatDate(last7Days), end: formatDate(today) },
+      { label: 'Last 30 Days', start: formatDate(last30Days), end: formatDate(today) },
+      { label: 'This Month', start: formatDate(thisMonthStart), end: formatDate(today) },
+      { label: 'Last Month', start: formatDate(lastMonthStart), end: formatDate(lastMonthEnd) },
+    ];
+  };
+
+  const handleQuickPreset = (preset: { start: string; end: string }) => {
+    setStartDate(preset.start);
+    setEndDate(preset.end);
+  };
 
   const handleApplyFilters = () => {
     onFilterChange({
@@ -38,19 +76,47 @@ const Filters = ({ isOpen, onClose, users, filters, onFilterChange }: FiltersPro
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="sm">
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader fontSize="md">Edit Filters</ModalHeader>
+    <Modal isOpen={isOpen} onClose={onClose} size={{ base: 'full', md: 'md' }}>
+      <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(10px)" />
+      <ModalContent bg={cardBg} mx={{ base: 4, md: 0 }}>
+        <ModalHeader fontSize={{ base: 'lg', md: 'xl' }} color={textColor}>
+          Filter Dashboard
+        </ModalHeader>
         <ModalCloseButton size="sm" />
         <ModalBody>
-          <Stack spacing={3}>
+          <Stack spacing={4}>
+            {/* Quick Date Presets */}
+            <Box>
+              <Text fontSize="sm" fontWeight="semibold" color={textColor} mb={3}>
+                Quick Date Presets
+              </Text>
+              <SimpleGrid columns={{ base: 2, md: 3 }} spacing={2}>
+                {getQuickDatePresets().map((preset) => (
+                  <Button
+                    key={preset.label}
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleQuickPreset(preset)}
+                    isActive={startDate === preset.start && endDate === preset.end}
+                    colorScheme="blue"
+                    fontSize="xs"
+                  >
+                    {preset.label}
+                  </Button>
+                ))}
+              </SimpleGrid>
+            </Box>
+
+            <Divider />
+
             {/* Users Dropdown (only if multiple users exist) */}
             {users.length > 1 && (
               <FormControl>
-                <FormLabel fontSize="sm">Select User</FormLabel>
+                <FormLabel fontSize="sm" fontWeight="semibold" color={textColor}>
+                  Select User
+                </FormLabel>
                 <Select
-                  size="sm"
+                  size="md"
                   value={userId}
                   onChange={(e) => setUserId(e.target.value)}
                   placeholder="Select user"
@@ -65,31 +131,45 @@ const Filters = ({ isOpen, onClose, users, filters, onFilterChange }: FiltersPro
               </FormControl>
             )}
 
-            {/* Start Date Picker */}
-            <FormControl>
-              <FormLabel fontSize="sm">Start Date</FormLabel>
-              <Input
-                size="sm"
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-            </FormControl>
+            {/* Custom Date Range */}
+            <Box>
+              <Text fontSize="sm" fontWeight="semibold" color={textColor} mb={3}>
+                Custom Date Range
+              </Text>
+              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3}>
+                <FormControl>
+                  <FormLabel fontSize="xs" color={textColor}>
+                    Start Date
+                  </FormLabel>
+                  <Input
+                    size="md"
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                </FormControl>
 
-            {/* End Date Picker */}
-            <FormControl>
-              <FormLabel fontSize="sm">End Date</FormLabel>
-              <Input
-                size="sm"                
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
-            </FormControl>
+                <FormControl>
+                  <FormLabel fontSize="xs" color={textColor}>
+                    End Date
+                  </FormLabel>
+                  <Input
+                    size="md"
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    min={startDate}
+                  />
+                </FormControl>
+              </SimpleGrid>
+            </Box>
           </Stack>
         </ModalBody>
-        <ModalFooter>
-          <Button size="sm" colorScheme="blue" onClick={handleApplyFilters}>
+        <ModalFooter gap={2}>
+          <Button size="md" variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button size="md" colorScheme="blue" onClick={handleApplyFilters}>
             Apply Filters
           </Button>
         </ModalFooter>

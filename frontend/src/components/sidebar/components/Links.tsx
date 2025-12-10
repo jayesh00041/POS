@@ -2,7 +2,7 @@
 
 import { NavLink, useLocation } from 'react-router-dom';
 // chakra imports
-import { Box, Flex, HStack, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box, Flex, HStack, Text, useColorModeValue, Tooltip } from '@chakra-ui/react';
 import { usePrivilege } from '../../../contexts/PrivilegeContext';
 
 export function SidebarLinks(props: {
@@ -14,10 +14,14 @@ export function SidebarLinks(props: {
   // Chakra color mode
   let location = useLocation();
   let activeColor = useColorModeValue('gray.700', 'white');
-  let inactiveColor = useColorModeValue('secondaryGray.600', 'secondaryGray.600');
+  let inactiveColor = useColorModeValue('gray.500', 'gray.400');
   let activeIcon = useColorModeValue('brand.500', 'white');
-  let textColor = useColorModeValue('secondaryGray.500', 'white');
+  let textColor = useColorModeValue('gray.600', 'gray.300');
   let brandColor = useColorModeValue('brand.500', 'brand.400');
+  let activeBg = useColorModeValue('rgba(66, 153, 225, 0.1)', 'rgba(66, 153, 225, 0.15)');
+  let hoverBg = useColorModeValue('rgba(66, 153, 225, 0.05)', 'rgba(66, 153, 225, 0.08)');
+  let tooltipBg = useColorModeValue('gray.800', 'gray.200');
+  let tooltipColor = useColorModeValue('white', 'gray.800');
 
   const { routes, isHovered } = props;
 
@@ -30,38 +34,59 @@ export function SidebarLinks(props: {
   const createLinks = (routes: RoutesType[]) => {
     return routes.map((route: RoutesType, index: number) => {
       if (route.layout === '/admin') {
-        return isUserAuthorised(route.privilege, (
+        const isActive = activeRoute(route.path.toLowerCase());
+        const linkContent = (
           <NavLink key={index} to={route.layout + route.path}>
             {route.icon ? (
-              <Box>
+              <Box
+                position="relative"
+                _hover={{
+                  bg: hoverBg,
+                }}
+                borderRadius={isHovered ? "12px" : "full"}
+                mx={isHovered ? "12px" : "8px"}
+                transition="all 0.35s cubic-bezier(0.4, 0, 0.2, 1)"
+                bg={isActive ? activeBg : 'transparent'}
+              >
                 <HStack
-                  spacing={activeRoute(route.path.toLowerCase()) ? '22px' : '26px'}
-                  py="5px"
-                  ps="10px"
+                  spacing={isHovered ? (isActive ? '12px' : '14px') : '0px'}
+                  py={isHovered ? "10px" : "12px"}
+                  ps={isHovered ? "16px" : "0px"}
+                  pr={isHovered ? "16px" : "0px"}
+                  justifyContent={isHovered ? "flex-start" : "center"}
+                  position="relative"
                 >
-                  <Flex w="100%" alignItems="center" justifyContent="center">
+                  <Flex 
+                    w="100%" 
+                    alignItems="center" 
+                    justifyContent={isHovered ? "flex-start" : "center"}
+                    position="relative"
+                  >
                     <Box
-                      color={activeRoute(route.path.toLowerCase()) ? activeIcon : textColor}
-                      me="18px"
+                      color={isActive ? activeIcon : textColor}
+                      me={isHovered ? "8px" : "0px"}
+                      transition="all 0.35s cubic-bezier(0.4, 0, 0.2, 1)"
+                      transform={isActive ? "scale(1.12) rotate(0deg)" : "scale(1)"}
+                      _groupHover={{
+                        transform: isActive ? "scale(1.2)" : "scale(1.05)",
+                      }}
                     >
                       {route.icon}
                     </Box>
-                    {isHovered && ( // Conditionally render route name based on isHovered
+                    {isHovered && (
                       <Text
                         me="auto"
-                        color={activeRoute(route.path.toLowerCase()) ? activeColor : textColor}
-                        fontWeight={activeRoute(route.path.toLowerCase()) ? 'bold' : 'normal'}
+                        color={isActive ? activeColor : textColor}
+                        fontWeight={isActive ? '600' : '500'}
+                        fontSize="sm"
+                        transition="all 0.35s cubic-bezier(0.4, 0, 0.2, 1)"
+                        opacity={isHovered ? 1 : 0}
+                        letterSpacing={isActive ? "0.2px" : "0px"}
                       >
                         {route.name}
                       </Text>
                     )}
                   </Flex>
-                  <Box
-                    h="36px"
-                    w="4px"
-                    bg={activeRoute(route.path.toLowerCase()) ? brandColor : 'transparent'}
-                    borderRadius="5px"
-                  />
                 </HStack>
               </Box>
             ) : (
@@ -71,7 +96,7 @@ export function SidebarLinks(props: {
                   py="5px"
                   ps="10px"
                 >
-                  {isHovered && ( // Conditionally render route name based on isHovered
+                  {isHovered && (
                     <Text
                       me="auto"
                       color={activeRoute(route.path.toLowerCase()) ? activeColor : inactiveColor}
@@ -85,7 +110,29 @@ export function SidebarLinks(props: {
               </Box>
             )}
           </NavLink>
-        ));
+        );
+
+        // Wrap with tooltip when sidebar is collapsed
+        if (!isHovered && route.icon) {
+          return isUserAuthorised(route.privilege, (
+            <Tooltip
+              key={index}
+              label={route.name}
+              placement="right"
+              hasArrow
+              bg={tooltipBg}
+              color={tooltipColor}
+              fontSize="xs"
+              px={3}
+              py={2}
+              borderRadius="md"
+            >
+              {linkContent}
+            </Tooltip>
+          ));
+        }
+
+        return isUserAuthorised(route.privilege, linkContent);
       }
     });
   };

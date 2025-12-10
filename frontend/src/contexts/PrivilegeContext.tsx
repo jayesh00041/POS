@@ -31,6 +31,10 @@ export const PrivilegeProvider = ({ children }) => {
 
   // Function to check if the user is authorized for a specific privilege
   const isUserAuthorised = (requiredPrivilege, content) => {
+    // Special case for admin-only features
+    if (requiredPrivilege === "ADMIN_ONLY") {
+      return user?.role === "admin" ? content : null;
+    }
     return (requiredPrivilege=== "" || privileges.includes(requiredPrivilege)) ? content : null; // Returns true if the privilege exists and is true
   };
 
