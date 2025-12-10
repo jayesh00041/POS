@@ -50,7 +50,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && copy main.js build/",
+    "build": "react-scripts build && cp main.js build/main.js",
     "electron": "electron .",
     "electron-build": "electron-builder",
     "preelectron-build": "npm run build",
