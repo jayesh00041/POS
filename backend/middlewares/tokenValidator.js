@@ -13,7 +13,6 @@ async function isUserVarified(req, res, next){
         const decodedAccessToken = jwt.verify(accessToken, config.jwtSecret);
 
         const user = await User.findById(decodedAccessToken.id);
-        console.log("user", user);
         if(!user){
             next(createHttpError(401, "User not found"));
         }

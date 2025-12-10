@@ -8,6 +8,7 @@ import {
   MdFoodBank,
   MdGridView,
   MdVerifiedUser,
+  MdSettings,
 } from 'react-icons/md';
 
 // Admin Imports
@@ -17,6 +18,7 @@ import Sales from 'views/admin/sales';
 import Products from 'views/admin/products';
 import Categories from 'views/admin/categories';
 import Users from 'views/admin/users';
+import Settings from 'views/admin/settings';
 // import MainDashboard from 'views/admin/default';
 // import NFTMarketplace from 'views/admin/marketplace';
 // import Profile from 'views/admin/profile';
@@ -75,6 +77,14 @@ const routes = [
     icon: <Icon as={MdVerifiedUser as React.ElementType} width="20px" height="20px" color="inherit" />,
     component: <Users />,
     privilege: Privilege.USERS_READ
+  },
+  {
+    name: "Settings",
+    layout: "/admin",
+    path: "/settings",
+    icon: <Icon as={MdSettings as React.ElementType} width="20px" height="20px" color="inherit" />,
+    component: <Settings />,
+    privilege: "ADMIN_ONLY"
   },
   // {
   //   name: 'Main Dashboard',

@@ -92,10 +92,11 @@ export default function AdminNavbar(props: {
 					sm: 'row',
 					md: 'row'
 				}}
-				alignItems={{ xl: 'center' }}
-				mb={gap}>
+				alignItems="center"
+				mb={gap}
+				position="relative">
 
-				<Box ms='auto' w={{ sm: '100%', md: 'unset' }}>
+				<Box w={{ sm: '100%', md: 'unset' }} position="relative">
 					<AdminNavbarLinks
 						onOpen={props.onOpen} 
 						secondary={props.secondary}

@@ -2,11 +2,10 @@
 import {
   Avatar,
   Box,
-  // Button,
   Flex,
   Icon,
-  // Image,
-  // Link,
+  HStack,
+  VStack,
   Menu,
   MenuButton,
   MenuItem,
@@ -14,6 +13,8 @@ import {
   Text,
   useColorModeValue,
   useColorMode,
+  Divider,
+  Badge,
 } from '@chakra-ui/react';
 // Custom Components
 // import { ItemContent } from '../../../../components/menu/ItemContent';
@@ -26,6 +27,7 @@ import React from 'react';
 // import navImage from 'assets/img/layout/Navbar.png';
 // import { MdNotificationsNone, MdInfoOutline } from 'react-icons/md';
 import { IoMdMoon, IoMdSunny } from 'react-icons/io';
+import { FiLogOut, FiUser, FiSettings } from 'react-icons/fi';
 import routes from '../../routes';
 import { useUser } from '../../contexts/UserContext';
 import { useMutation } from '@tanstack/react-query';
@@ -80,6 +82,10 @@ export default function HeaderLinks(props: { secondary: boolean }) {
   const handleLogout = () => {
     logoutMutation.mutate();
   };
+  const menuItemHover = useColorModeValue('gray.100', 'whiteAlpha.100');
+  const menuItemActive = useColorModeValue('blue.50', 'blue.900');
+  const logoutHover = useColorModeValue('red.50', 'red.900');
+
   return (
     <Flex
       alignItems="center"
@@ -87,151 +93,166 @@ export default function HeaderLinks(props: { secondary: boolean }) {
       justifyContent="space-between"
       flexWrap={secondary ? { base: 'wrap', md: 'nowrap' } : 'unset'}
       w={{ sm: '100%', md: 'calc(100vw - 165px)' }}
+      gap={{ base: 2, md: 4 }}
     >
-      {/* <SearchBar
-				mb={() => {
-					if (secondary) {
-						return { base: '10px', md: 'unset' };
-					}
-					return 'unset';
-				}}
-				me='10px'
-				borderRadius='30px'
-			/> */}
-      <SidebarResponsive routes={routes} />
-      <Text
-        fontSize="x-large"
-        mr="auto"
-        display={{ sm: 'none', md: 'contents' }}
-        fontWeight="700"
-        color={textColor}
-      >
-        {pageName}
-      </Text>
-      <Box mb={{ sm: '8px', md: '0px' }} display={{ xl: 'none' }}>
-        {/* <Breadcrumb>
-            <BreadcrumbItem color={secondaryText} fontSize='sm' mb='5px'>
-              <BreadcrumbLink href='#' color={secondaryText}>
-                Pages
-              </BreadcrumbLink>
-            </BreadcrumbItem>
+      {/* Left Section: Sidebar Toggle + Page Title */}
+      <HStack spacing={{ base: 2, md: 4 }} flex="1" minW="0">
+        <SidebarResponsive routes={routes} />
+        <VStack align="flex-start" spacing={0} display={{ base: 'none', md: 'flex' }} flex="1" minW="0">
+          <Text
+            fontSize={{ base: 'lg', md: 'xl', lg: '2xl' }}
+            fontWeight="700"
+            color={textColor}
+            lineHeight="1.2"
+            noOfLines={1}
+          >
+            {pageName}
+          </Text>
+          <Text
+            fontSize="xs"
+            color={useColorModeValue('secondaryGray.600', 'secondaryGray.400')}
+            display={{ base: 'none', lg: 'block' }}
+          >
+            Welcome back, {user.name}
+          </Text>
+        </VStack>
+      </HStack>
 
-            <BreadcrumbItem color={secondaryText} fontSize='sm'>
-              <BreadcrumbLink href='#' color={secondaryText}>
-                {brandText}
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-          </Breadcrumb> */}
-        {/* Here we create navbar brand, based on route name */}
-        {/* <Link
-            color={mainText}
-            href='#'
-            bg='inherit'
-            borderRadius='inherit'
-            fontWeight='bold'
-            fontSize='34px'
-            _hover={{ color: { mainText } }}
-            _active={{
-              bg: 'inherit',
-              transform: 'none',
-              borderColor: 'transparent'
-            }}
-            _focus={{
-              boxShadow: 'none'
-            }}>
-            {brandText}
-          </Link> */}
-        <img src={logo} alt="logo" height="80px" width="80px" />
-        {/* <Text>Jalso Park</Text> */}
+      {/* Center Section: Logo (Mobile Only) */}
+      <Box 
+        display={{ base: 'flex', xl: 'none' }}
+        alignItems="center"
+        justifyContent="center"
+        position="absolute"
+        left="50%"
+        transform="translateX(-50%)"
+        zIndex={1}
+      >
+        <img 
+          src={logo} 
+          alt="logo" 
+          height="50px" 
+          width="50px"
+          style={{ 
+            maxWidth: '100%',
+            height: 'auto',
+            objectFit: 'contain'
+          }}
+        />
       </Box>
 
-      {/* <Menu>
-				<MenuButton p='0px'>
-					<Icon mt='6px' as={MdNotificationsNone} color={navbarIcon} w='18px' h='18px' me='10px' />
-				</MenuButton>
-				<MenuList
-					boxShadow={shadow}
-					p='20px'
-					borderRadius='20px'
-					bg={menuBg}
-					border='none'
-					mt='22px'
-					me={{ base: '30px', md: 'unset' }}
-					minW={{ base: 'unset', md: '400px', xl: '450px' }}
-					maxW={{ base: '360px', md: 'unset' }}>
-					<Flex w='100%' mb='20px'>
-						<Text fontSize='md' fontWeight='600' color={textColor}>
-							Notifications
-						</Text>
-						<Text fontSize='sm' fontWeight='500' color={textColorBrand} ms='auto' cursor='pointer'>
-							Mark all read
-						</Text>
-					</Flex>
-					<Flex flexDirection='column'>
-						<MenuItem _hover={{ bg: 'none' }} _focus={{ bg: 'none' }} px='0' borderRadius='8px' mb='10px'>
-							<ItemContent info='Horizon UI Dashboard PRO' />
-						</MenuItem>
-						<MenuItem _hover={{ bg: 'none' }} _focus={{ bg: 'none' }} px='0' borderRadius='8px' mb='10px'>
-							<ItemContent info='Horizon Design System Free' />
-						</MenuItem>
-					</Flex>
-				</MenuList>
-			</Menu> */}
-
+      {/* Right Section: User Menu */}
       <Menu>
         <MenuButton
-          p="10px"
-          borderRadius="30px"
-          height="60px"
-          width="60px"
+          as={Box}
+          p={{ base: '6px', md: '8px' }}
+          borderRadius="xl"
+          height="auto"
+          width="auto"
           bg={menuBg}
           boxShadow={shadow}
+          _hover={{
+            boxShadow: useColorModeValue(
+              '14px 17px 40px 4px rgba(112, 144, 176, 0.25)',
+              '14px 17px 40px 4px rgba(112, 144, 176, 0.1)'
+            ),
+            transform: 'translateY(-2px)',
+          }}
+          transition="all 0.2s ease"
+          position="relative"
+          zIndex={2}
         >
-          <Avatar
-            _hover={{ cursor: 'pointer' }}
-            color="white"
-            name={user.name}
-            bg="#11047A"
-            size="sm"
-            w="40px"
-            h="40px"
-          />
+          <HStack spacing={{ base: 0, lg: 3 }} px={{ base: 1, md: 2 }}>
+            <Avatar
+              _hover={{ cursor: 'pointer' }}
+              color="white"
+              name={user.name}
+              bgGradient="linear(135deg, #667eea 0%, #764ba2 100%)"
+              size={{ base: 'sm', md: 'md' }}
+              w={{ base: '36px', md: '44px' }}
+              h={{ base: '36px', md: '44px' }}
+              boxShadow="0px 4px 12px rgba(102, 126, 234, 0.3)"
+            />
+            <VStack
+              align="flex-start"
+              spacing={0}
+              display={{ base: 'none', lg: 'flex' }}
+            >
+              <Text fontSize="sm" fontWeight="600" color={textColor}>
+                {user.name}
+              </Text>
+              <Text fontSize="xs" color={useColorModeValue('secondaryGray.600', 'secondaryGray.400')}>
+                Admin
+              </Text>
+            </VStack>
+          </HStack>
         </MenuButton>
         <MenuList
           boxShadow={shadow}
           p="0px"
-          mt="10px"
-          borderRadius="20px"
+          mt="12px"
+          borderRadius="xl"
           bg={menuBg}
           border="none"
           position="relative"
           zIndex="10"
+          minW="220px"
         >
-          <Flex w="100%" mb="0px">
-            <Text
-              ps="20px"
-              pt="16px"
-              pb="10px"
-              w="100%"
-              borderBottom="1px solid"
-              borderColor={borderColor}
-              fontSize="sm"
-              fontWeight="700"
-              color={textColor}
-            >
-              👋&nbsp; Hey, {user.name}
-            </Text>
-          </Flex>
-          <Flex flexDirection="column" p="10px">
+          <Box
+            px="20px"
+            pt="20px"
+            pb="16px"
+            borderBottom="1px solid"
+            borderColor={borderColor}
+          >
+            <HStack spacing={3}>
+              <Avatar
+                color="white"
+                name={user.name}
+                bgGradient="linear(135deg, #667eea 0%, #764ba2 100%)"
+                size="md"
+                w="48px"
+                h="48px"
+              />
+              <VStack align="flex-start" spacing={0}>
+                <Text fontSize="md" fontWeight="700" color={textColor}>
+                  {user.name}
+                </Text>
+                <Text fontSize="xs" color={useColorModeValue('secondaryGray.600', 'secondaryGray.400')}>
+                  {user?.email || 'admin@jalsopark.com'}
+                </Text>
+              </VStack>
+            </HStack>
+          </Box>
+          <Flex flexDirection="column" p="8px">
             <MenuItem
-              _hover={{ bg: 'none' }}
-              _focus={{ bg: 'none' }}
-              borderRadius="8px"
+              _hover={{ bg: menuItemHover }}
+              _focus={{ bg: menuItemActive }}
+              borderRadius="lg"
               px="14px"
+              py="12px"
+              mb="4px"
+            >
+              <Icon
+                me="12px"
+                h="18px"
+                w="18px"
+                color={navbarIcon}
+                as={FiUser as React.ElementType}
+              />
+              <Text fontSize="sm" fontWeight="500">Profile</Text>
+            </MenuItem>
+            <MenuItem
+              _hover={{ bg: menuItemHover }}
+              _focus={{ bg: menuItemActive }}
+              borderRadius="lg"
+              px="14px"
+              py="12px"
+              mb="4px"
               onClick={toggleColorMode}
             >
               <Icon
-                me="10px"
+                me="12px"
                 h="18px"
                 w="18px"
                 color={navbarIcon}
@@ -241,20 +262,27 @@ export default function HeaderLinks(props: { secondary: boolean }) {
                     : IoMdSunny) as React.ElementType
                 }
               />
-              <Text fontSize="sm">
+              <Text fontSize="sm" fontWeight="500">
                 {colorMode === 'light' ? 'Dark Mode' : 'Light Mode'}
               </Text>
             </MenuItem>
-
+            <Divider my="4px" borderColor={borderColor} />
             <MenuItem
-              _hover={{ bg: 'none' }}
-              _focus={{ bg: 'none' }}
-              color="red.400"
-              borderRadius="8px"
+              _hover={{ bg: logoutHover }}
+              _focus={{ bg: logoutHover }}
+              color="red.500"
+              borderRadius="lg"
               px="14px"
+              py="12px"
               onClick={handleLogout}
             >
-              <Text fontSize="sm">Log out</Text>
+              <Icon
+                me="12px"
+                h="18px"
+                w="18px"
+                as={FiLogOut as React.ElementType}
+              />
+              <Text fontSize="sm" fontWeight="500">Log out</Text>
             </MenuItem>
           </Flex>
         </MenuList>
